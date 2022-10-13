@@ -8,7 +8,7 @@ As we consider a particular problem being a game against another player, not a d
 - opponent_card_no
 - player_card_no (may be of interest to the net, why not)
 - was_hit_okay_option (did we stay till next round) -> ground truth  
-The last one should probably be this way or we have to find something to penalize the stand as a single decision.
+The last one should probably be this way or we have to find something to penalize the stand as a single decision. But maybe we should so that the model doesn't get saturated during playing against itself - then both will just stand forever.
 
 ### Random data generation
 We decided to just generate the deck randomly and make random decision for the opponent until one loses. Then, we have options: 
