@@ -121,8 +121,8 @@ class Game:
             Decyzja zostaje blokowana w momencie gry gracz ma 21 (stay)
             """
 
-            player_decision = self.random_stay_or_hit(player_decision)
-            dealer_decision = self.random_stay_or_hit(dealer_decision)
+            player_decision = self.random_stay_or_hit(player_decision, previous_player_score)
+            dealer_decision = self.random_stay_or_hit(dealer_decision, previous_dealer_score)
 
             options_player = self.calc_score(self.player_hand)
             options_dealer = self.calc_score(self.dealer_hand)
@@ -176,7 +176,9 @@ class Game:
         else:
             return decision
 
-    def random_stay_or_hit(self, decision: int) -> int:
+    def random_stay_or_hit(self, decision: int, previous_score: int = 0) -> int:
+        if previous_score == 21:
+            return 0
         if decision:
             stay_or_hit = choices([0, 1], weights=(1, 3), k=1)
             if stay_or_hit:
