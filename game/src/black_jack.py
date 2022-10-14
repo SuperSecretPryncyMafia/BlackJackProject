@@ -118,7 +118,7 @@ class Game:
 
         while True:
             player_decision = self.random_stay_or_hit(player_decision)
-            dealer_decision = self.stay_or_hit_dealer(dealer_decision)
+            dealer_decision = self.random_stay_or_hit(dealer_decision)
 
             options_player = self.calc_score(self.player_hand)
             options_dealer = self.calc_score(self.dealer_hand)
