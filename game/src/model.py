@@ -7,13 +7,13 @@ def preparing_data(dataset: pd.DataFrame):
     # player_hand;player_options;player_decision;dealer_hand;dealer_options;result
     # risk of decision bias for 10s and ones
     player_hand = dataset["player_hand"]
-    player_sum = dataset["player_options"] # should be a list? or not, because only one state was actually used?
+    player_sum = dataset["player_options"]
     player_card_no = len(player_hand) - 1
     player_decision = dataset["player_decision"]
     player_visible = player_hand[0]
 
     dealer_hand = dataset["dealer_hand"]
-    dealer_sum = dataset["dealer_options"] # should be a list? or not, because only one state was actually used?
+    dealer_sum = dataset["dealer_options"]
     dealer_card_no = len(dealer_hand) - 1
     dealer_decision = dataset["dealer_decision"]
     dealer_visible = dealer_hand[0]
