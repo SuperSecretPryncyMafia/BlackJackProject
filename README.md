@@ -22,6 +22,6 @@ As the player will not make decisions randomly, we need to do something to simul
 To actually train the model to compete with humans, we will run a few games against an actual player. Then, the data will be used to finetune the network.
 
 ### What to do with the aces
-As shown before, we get the arrays of the current sum if aces occur. We decided that each of the cases should be considered separately and then the best possible choice should be made based on each of the predictions.
+As shown before, we get the arrays of the current sum if aces occur. We decided that each of the cases should be considered separately and then the best possible choice should be made based on each of the predictions. Intuition suggests that the moves proposed by smaller sums should be more meaningful than for like, two aces and 20 because of it. I would propose a small dense layer with like one neuron that would find the best ratio that would be finetuned during games aginst itself and players.
 
 ## Model
