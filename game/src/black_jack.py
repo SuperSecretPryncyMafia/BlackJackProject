@@ -367,7 +367,7 @@ class Game:
             "\n"
         ]
 
-        with open("data_for_nn.txt", "a+") as file:
+        with open("data_for_nn_test.txt", "a+") as file:
             string = ";".join(dataset)
             file.write(string)
 
