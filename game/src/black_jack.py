@@ -103,7 +103,7 @@ class Game:
                 return result
 
             result = self.check_if_busted(options_player, options_dealer)
-            if result != 1:
+            if result != 0:
                 return result
 
     def random_generator_black_jack(self):
@@ -117,6 +117,10 @@ class Game:
         previous_dealer_score = self.calc_score(self.dealer_hand)
 
         while True:
+            """
+            Decyzja zostaje blokowana w momencie gry gracz ma 21 (stay)
+            """
+
             player_decision = self.random_stay_or_hit(player_decision)
             dealer_decision = self.random_stay_or_hit(dealer_decision)
 
@@ -270,7 +274,7 @@ class Game:
         elif len(options_d) == 0:
             print("You win")
             return 2
-        return 1
+        return 0
 
     @staticmethod
     def check_if_busted_quiet(options_p, options_d):
