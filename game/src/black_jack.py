@@ -139,17 +139,19 @@ class Game:
                     previous_player_score,
                     player_decision,
                     previous_dealer_score,
+                    dealer_decision,
                     result
                 )
                 self.reset()
                 return result
 
             result = self.check_if_busted_quiet(options_player, options_dealer)
-            if result != 0:
+            if result != 0: # we want the report from each round here
                 self.write_results(
                     previous_player_score,
                     player_decision,
                     previous_dealer_score,
+                    dealer_decision,
                     result
                 )
                 self.reset()
@@ -348,6 +350,7 @@ class Game:
             options_player,
             decision_player,
             options_dealer,
+            decision_dealer,
             outcome
             ):
 
@@ -357,6 +360,7 @@ class Game:
         #     "\nPlayer decision: ", str(decision_player),
         #     "\n\nDealer hand: ", [x.sign for x in self.dealer_hand[:-1]],
         #     "\nDealer options: ", str(options_dealer),
+        #     "\nDealer decision: ", str(decision_player),
         #     "\n\nResult: ", str(outcome)
         # )
         dataset = [
@@ -365,6 +369,7 @@ class Game:
             str(decision_player),
             str([x.sign for x in self.dealer_hand[:-1]]),
             str(options_dealer),
+            str(decision_dealer),
             str(outcome),
             "\n"
         ]
