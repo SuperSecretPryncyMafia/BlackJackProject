@@ -5,6 +5,7 @@ import pandas as pd
 
 def preparing_data(dataset: pd.DataFrame):
     # player_hand;player_options;player_decision;dealer_hand;dealer_options;result
+    # risk of decision bias for 10s and ones
     player_hand = dataset["player_hand"]
     player_sum = dataset["player_options"] # should be a list? or not, because only one state was actually used?
     player_card_no = len(player_hand) - 1
