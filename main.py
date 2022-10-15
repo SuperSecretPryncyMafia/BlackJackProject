@@ -1,7 +1,7 @@
 from black_jack import BlackJack
 from flask import redirect
 from home.home import home_blueprint
-
+from game.game import game_blueprint
 app = BlackJack()
 
 
@@ -14,4 +14,5 @@ if __name__ == '__main__':
     app.config['SESSION_TYPE'] = 'filesystem'
     app.secret_key = 'super secret key'
     app.register_blueprint(home_blueprint)
+    app.register_blueprint(game_blueprint)
     app.run(debug=True)

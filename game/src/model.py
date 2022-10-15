@@ -21,11 +21,9 @@ def preparing_data(dataset: pd.DataFrame):
     # code correct decision for this turn
     result = dataset["result"]
     if result == -1:
-        player_decision = int(not(player_decision))
+        player_decision = int(not player_decision)
     elif result == 2:
-        dealer_decision = int(not(dealer_decision))
-
-    
+        dealer_decision = int(not dealer_decision)
 
 
 if __name__ == "__main__":

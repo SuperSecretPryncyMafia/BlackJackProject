@@ -117,12 +117,17 @@ class Game:
         previous_dealer_score = self.calc_score(self.dealer_hand)
 
         while True:
-            """
-            Decyzja zostaje blokowana w momencie gry gracz ma 21 (stay)
-            """
 
-            player_decision = self.random_stay_or_hit(player_decision, previous_player_score)
-            dealer_decision = self.random_stay_or_hit(dealer_decision, previous_dealer_score)
+            player_decision = self.random_stay_or_hit(
+                True,
+                player_decision,
+                previous_player_score
+            )
+            dealer_decision = self.random_stay_or_hit(
+                False,
+                dealer_decision,
+                previous_dealer_score
+            )
 
             options_player = self.calc_score(self.player_hand)
             options_dealer = self.calc_score(self.dealer_hand)
@@ -180,13 +185,21 @@ class Game:
         else:
             return decision
 
-    def random_stay_or_hit(self, decision: int, previous_score: int = 0) -> int:
+    def random_stay_or_hit(
+            self,
+            player: bool,
+            decision: int,
+            previous_score: int = 0
+            ) -> int:
         if previous_score == 21:
             return 0
         if decision:
             stay_or_hit = choices([0, 1], weights=(1, 3), k=1)
             if stay_or_hit:
-                self.hit(self.player_hand)
+                if player:
+                    self.hit(self.player_hand)
+                else:
+                    self.hit(self.dealer_hand)
             return stay_or_hit[0]
         else:
             return decision
@@ -369,14 +382,14 @@ class Game:
             str([x.sign for x in self.player_hand]),
             str(options_player),
             str(decision_player),
-            str([x.sign for x in self.dealer_hand[:-1]]),
+            str([x.sign for x in self.dealer_hand]),
             str(options_dealer),
             str(decision_dealer),
             str(outcome),
             "\n"
         ]
 
-        with open("data_for_nn_test.txt", "a+") as file:
+        with open("data_for_nn.txt", "a+") as file:
             string = ";".join(dataset)
             file.write(string)
 
@@ -387,15 +400,17 @@ class Game:
                     Card(sign, self.deck_template[sign]["value"], color)
                 )
 
+
 class Player:
     pass
+
 
 class Bot:
     pass
 
+
 class Dealer(Bot):
     pass
-
 
 
 class Card:
