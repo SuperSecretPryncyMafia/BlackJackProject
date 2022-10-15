@@ -4,6 +4,7 @@ from home.home import home_blueprint
 
 app = BlackJack()
 
+
 @app.route("/")
 def from_root_to_home():
     return redirect("/home")
