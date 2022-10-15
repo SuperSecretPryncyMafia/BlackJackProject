@@ -18,10 +18,13 @@ home_blueprint = Blueprint(
 
 @home_blueprint.route("/home")
 def home():
-    if request.method == "POST":
-        if request.form["start_button"] == "dealer":
-            return redirect("/game", messages={"oponent": "dealer"})
-        elif request.form["start_button"] == "bot":
-            return redirect("/game", messages={"oponent": "bot"})
-    elif request.method == "GET":
-        return render_template("home/home.html")
+    if request.method == "GET":
+        return render_template("home/home.html", home=background_process_test)
+    elif request.method == "POST":
+        return redirect("/game", home=background_process_test)
+
+
+@home_blueprint.route('/background_process_test')
+def background_process_test():
+    print("Hello")
+    return "nothing"

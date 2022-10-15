@@ -1,6 +1,6 @@
-*/__pycache__
-/__pycache__
-/.vscode
+*__pycache__/
+__pycache__/
+.vscode/
 
 *.cpython*
 *.pyc
