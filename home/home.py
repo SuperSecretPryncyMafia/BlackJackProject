@@ -16,7 +16,7 @@ home_blueprint = Blueprint(
 )
 
 
-@home_blueprint.route("/home", ['GET', 'POST'])
+@home_blueprint.route("/home")
 def home():
     if request.method == "POST":
         if request.form["start_button"] == "dealer":
