@@ -4,8 +4,8 @@ import pandas as pd
 
 
 def preparing_data(dataset: pd.DataFrame):
+    # function for reading and extracting training data
     # player_hand;player_options;player_decision;dealer_hand;dealer_options;result
-    # risk of decision bias for 10s and ones
     player_hand = dataset["player_hand"]
     player_sum = dataset["player_options"]
     player_card_no = len(player_hand) - 1

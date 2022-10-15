@@ -1,7 +1,7 @@
 
 /* From uiverse.io */
 button {
- --color: #00116e;
+ --color: #00397b;
  font-family: inherit;
  display: inline-block;
  width: 8em;
@@ -45,6 +45,6 @@ button:hover:before {
 }
 
 button:active:before {
- background: #0026ff;
+ background: #00397b;
  transition: background 0s;
 }
