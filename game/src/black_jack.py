@@ -146,14 +146,16 @@ class Game:
                 return result
 
             result = self.check_if_busted_quiet(options_player, options_dealer)
-            if result != 0: # we want the report from each round here
-                self.write_results(
+
+            self.write_results(
                     previous_player_score,
                     player_decision,
                     previous_dealer_score,
                     dealer_decision,
                     result
                 )
+
+            if result != 0:
                 self.reset()
                 return result
 
