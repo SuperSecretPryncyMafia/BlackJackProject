@@ -1,3 +1,4 @@
+player_hand;player_options;player_decision;dealer_hand;dealer_options;dealer_decision;result;
 ['10', '3'];[10];1;['9', '9'];[9];0;0;
 ['10', '3', '5'];13;0;['9', '9'];18;0;1;
 ['10', '8'];[10];1;['8', 'K'];[8];1;0;
