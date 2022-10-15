@@ -1,6 +1,9 @@
+
 from flask import (
     Blueprint,
-    render_template
+    render_template,
+    request,
+    redirect
 )
 
 
@@ -13,6 +16,12 @@ home_blueprint = Blueprint(
 )
 
 
-@home_blueprint.route("/home")
+@home_blueprint.route("/home", ['GET', 'POST'])
 def home():
-    return render_template("home/home.html")
+    if request.method == "POST":
+        if request.form["start_button"] == "dealer":
+            return redirect("/game", messages={"oponent": "dealer"})
+        elif request.form["start_button"] == "bot":
+            return redirect("/game", messages={"oponent": "bot"})
+    elif request.method == "GET":
+        return render_template("home/home.html")
