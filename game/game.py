@@ -1,7 +1,11 @@
 from flask import Blueprint, send_from_directory
 
 
-home_blueprint = Blueprint(name="game", import_name=__name__)
+home_blueprint = Blueprint(
+    name="game",
+    template_folder="./templates",
+    import_name=__name__
+)
 
 
 @home_blueprint.route("/game", ["GET"])
