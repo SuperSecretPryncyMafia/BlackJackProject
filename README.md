@@ -5,8 +5,8 @@ As we consider a particular problem being a game against another player, not a d
 ### The data format
 - current_sum -> (array if there are aces)
 - opponent_visible_card -> (array if there are aces)
-- opponent_card_no
 - player_card_no (may be of interest to the net, why not)
+- opponent_card_no
 - decision (if we stayed till next round, then the one taken, otherwise the other one) -> ground truth  
 The last one should probably be this way or we have to find something to penalize the stand as a single decision. But maybe we should so that the model doesn't get saturated during playing against itself - then both will just stand forever.
 

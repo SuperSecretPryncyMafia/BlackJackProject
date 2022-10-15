@@ -11,8 +11,8 @@ card_meanings = { "1": [1], "2": [2], "3": [3], "4": [4], "5": [5],
 
 
 def preparing_data(dataset: pd.DataFrame):
-    # function for reading and extracting training data
-    # player_hand;player_options;player_decision;dealer_hand;dealer_options;result
+    # generates .csv file ready for training the model using the structure:
+    # player_sum, dealer_visible, own_card_number, dealer_card_no, label
 
     # decode hands to lists
     player_hand = dataset["player_hand"].to_list()
@@ -106,8 +106,8 @@ def preparing_data(dataset: pd.DataFrame):
     dealer_pov = np.append(dealer_pov, dealer_decision, axis=1)
 
     ds = np.append(player_pov, dealer_pov, axis=0)
+    np.savetxt("raw_data.csv", ds, delimiter=",")
     print(ds.shape)
-    return
 
 
 def calc_score(hand: list) -> list:
