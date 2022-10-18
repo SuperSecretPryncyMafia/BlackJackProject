@@ -4,17 +4,15 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Black Jack</title>
-        <link rel="stylesheet" href="{{ url_for('.static',filename='blackjack.css') }}">
-        <link rel="stylesheet" href="{{ url_for('.static',filename='blackjack.js') }}">
-        <script src="/static/blackjack.js"></script>
-        <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-        <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+        <link rel="stylesheet" type= "text/css" href="{{ url_for('.static',filename='blackjack.css') }}">
+        <link rel="stylesheet" href="{{ url_for('game.static',filename='blackjack.js') }}">
+        <script src="./game/static/blackjack.js"></script>
     </head>
 
     <body>
         <h2>Dealer: <span id="dealer-sum"></span></h2>
         <div id="dealer-cards">
-            <img id="hidden" src="{{ url_for('.static',filename='cards/BACK.png') }}">
+            <img id="hidden" src="{{ url_for('game.static',filename='cards/BACK.png') }}">
         </div>
 
         <h2>You: <span id="your-sum"></span></h2>
