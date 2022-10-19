@@ -22,5 +22,9 @@
         <button id="hit">Hit</button>
         <button id="stay">Stay</button>
         <h3 id="results"></h3>
+	  <div id="betbox" style="display: flex; justify-content: center; align-items: center; gap:30px;">
+	    <h2>Bet: <span id="current-bet"></span></h2>
+          <img id="bet5" src="{{url_for('game.static',filename='chips/black.webp')}}" width="100" draggable="false">
+        </div>
     </body>
 </html>
