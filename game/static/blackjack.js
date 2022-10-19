@@ -4,6 +4,8 @@ var yourSum = 0;
 var dealerAceCount = 0;
 var yourAceCount = 0; 
 
+var bet = 0;
+
 var hidden;
 var deck;
 
@@ -67,6 +69,9 @@ function startGame() {
     console.log(yourSum);
     document.getElementById("hit").addEventListener("click", hit);
     document.getElementById("stay").addEventListener("click", stay);
+    document.getElementById("bet5").addEventListener("click", bet5);
+
+    document.getElementById("current-bet").innerText = bet;
 
 }
 
@@ -116,6 +121,11 @@ function stay() {
     document.getElementById("dealer-sum").innerText = dealerSum;
     document.getElementById("your-sum").innerText = yourSum;
     document.getElementById("results").innerText = message;
+}
+
+function bet5() {
+    bet += 5;
+    document.getElementById("current-bet").innerText = bet;
 }
 
 function getValue(card) {
