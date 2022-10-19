@@ -33,4 +33,4 @@ def game_dealer():
 @game_blueprint.route("/game_dealer/deck", methods=["GET"])
 def deck():
     type(json.dumps(game_blueprint.deck))
-    return json.dumps(game_blueprint.deck)
+    return json.dumps({"your_json": True})
