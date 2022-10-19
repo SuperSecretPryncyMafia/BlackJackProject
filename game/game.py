@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, jsonify
 from .src.black_jack import Game
 import json
 
@@ -32,5 +32,8 @@ def game_dealer():
 
 @game_blueprint.route("/game_dealer/deck", methods=["GET"])
 def deck():
-    type(json.dumps(game_blueprint.deck))
-    return json.dumps({"your_json": True})
+    return jsonify({"deck": game_blueprint.deck})
+
+@game_blueprint.route("/game_dealer/card", methods=["GET"])
+def deck():
+    return jsonify({"deck": game_blueprint.deck})

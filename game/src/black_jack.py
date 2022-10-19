@@ -227,6 +227,15 @@ class Game:
         hand.append(card)
         self.card_deck.remove(card)
 
+    def post_one_card(self):
+        card = sample(self.card_deck, 1)[0]
+        self.card_deck.remove(card)
+        return {
+            "sign": card.sign,
+            "value": card.value,
+            "color": card.color
+        }
+
     def reset(self) -> None:
         """
         We need to reset hands of the dealer and the player for the next round

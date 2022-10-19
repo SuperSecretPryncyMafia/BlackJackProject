@@ -15,6 +15,11 @@ window.onload = function() {
     startGame();
 }
 
+async function getJSON(url) {
+    json = await (await fetch(url)).json();
+    return json
+}
+
 function buildDeck() {
     let values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
     let types = ["C", "D", "H", "S"];
@@ -88,7 +93,7 @@ function hit() {
 
 }
 
-function stay() {
+async function stay() {
     dealerSum = reduceAce(dealerSum, dealerAceCount);
     yourSum = reduceAce(yourSum, yourAceCount);
 
@@ -115,7 +120,7 @@ function stay() {
 
     document.getElementById("dealer-sum").innerText = dealerSum;
     document.getElementById("your-sum").innerText = yourSum;
-    document.getElementById("results").innerText = message;
+    document.getElementById("results").innerText = await getJSON("http://127.0.0.1:5000/game_dealer/deck");
 }
 
 function getValue(card) {
