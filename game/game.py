@@ -35,5 +35,5 @@ def deck():
     return jsonify({"deck": game_blueprint.deck})
 
 @game_blueprint.route("/game_dealer/card", methods=["GET"])
-def deck():
-    return jsonify({"deck": game_blueprint.deck})
+def card():
+    return jsonify(game_blueprint.game.post_one_card())
