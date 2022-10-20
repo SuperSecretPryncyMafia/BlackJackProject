@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, jsonify
 from .src.black_jack import Game
-import json
 
 
 class GameBlueprint(Blueprint, Game):
