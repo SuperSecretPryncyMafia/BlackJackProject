@@ -3,7 +3,7 @@ from .src.black_jack import Game
 import json
 
 
-class GameBlueprint(Blueprint):
+class GameBlueprint(Blueprint, Game):
     def __init__(self):
         super().__init__(
             name="game",
@@ -13,8 +13,6 @@ class GameBlueprint(Blueprint):
             url_prefix="/game",
             import_name=__name__
         )
-        self.game = Game()
-        self.deck = self.game.generate_deck()
 
 
 game_blueprint = GameBlueprint()
@@ -32,8 +30,9 @@ def game_dealer():
 
 @game_blueprint.route("/game_dealer/deck", methods=["GET"])
 def deck():
-    return jsonify({"deck": game_blueprint.deck})
+    return jsonify(game_blueprint.post_one_card())
+
 
 @game_blueprint.route("/game_dealer/card", methods=["GET"])
 def card():
-    return jsonify(game_blueprint.game.post_one_card())
+    return jsonify(game_blueprint.post_one_card())

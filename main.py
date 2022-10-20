@@ -1,5 +1,5 @@
 from black_jack import BlackJack
-from flask import redirect
+from flask import redirect, send_from_directory
 from home.home import home_blueprint
 from game.game import game_blueprint
 app = BlackJack()
@@ -8,6 +8,11 @@ app = BlackJack()
 @app.route("/")
 def from_root_to_home():
     return redirect("/home")
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory("./", "favicon.ico")
 
 
 if __name__ == '__main__':
