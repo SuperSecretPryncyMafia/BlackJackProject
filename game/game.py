@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, jsonify
 from .src.black_jack import Game
 
 
-class GameBlueprint(Blueprint, Game):
+class GameBlueprint(Blueprint):
     def __init__(self):
         super().__init__(
             name="game",
@@ -12,6 +12,10 @@ class GameBlueprint(Blueprint, Game):
             url_prefix="/game",
             import_name=__name__
         )
+        self.game = Game()
+
+    def post_one_card(self):
+        return self.game.post_one_card()
 
 
 game_blueprint = GameBlueprint()
@@ -29,7 +33,7 @@ def game_dealer():
 
 @game_blueprint.route("/game_dealer/deck", methods=["GET"])
 def deck():
-    return jsonify(game_blueprint.post_one_card())
+    return jsonify({"deck": game_blueprint.post_one_card()})
 
 
 @game_blueprint.route("/game_dealer/card", methods=["GET"])

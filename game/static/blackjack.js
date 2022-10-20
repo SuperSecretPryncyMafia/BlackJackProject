@@ -126,10 +126,10 @@ async function stay() {
     else if (yourSum < dealerSum) {
         message = "You Lose!";
     }
-
+    card = await getJSON("http://127.0.0.1:5000/game_dealer/card");
     document.getElementById("dealer-sum").innerText = dealerSum;
     document.getElementById("your-sum").innerText = yourSum;
-    document.getElementById("results").innerText = await getJSON("http://127.0.0.1:5000/game_dealer/deck");
+    document.getElementById("results").innerText = card.color + ' ' + card.value + ' ' + card.sign;
 }
 
 function bet5() {
