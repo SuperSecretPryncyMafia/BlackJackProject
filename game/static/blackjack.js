@@ -127,9 +127,10 @@ async function stay() {
         message = "You Lose!";
     }
     card = await getJSON("http://127.0.0.1:5000/game_dealer/card");
+    card = "COLOR: " + card.color + ' VALUE: ' + card.value + ' SIGN: ' + card.sign;
     document.getElementById("dealer-sum").innerText = dealerSum;
     document.getElementById("your-sum").innerText = yourSum;
-    document.getElementById("results").innerText = card.color + ' ' + card.value + ' ' + card.sign;
+    document.getElementById("results").innerText = card
 }
 
 function bet5() {

@@ -230,7 +230,7 @@ class Game:
         self.card_deck.remove(card)
 
     def post_one_card(self):
-        self.card_deck = self.generate_deck()
+        self.generate_deck()
         card = sample(self.card_deck, 1)[0]
         self.card_deck.remove(card)
         return {
