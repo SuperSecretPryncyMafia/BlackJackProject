@@ -1,5 +1,6 @@
 from random import choices, sample
 from itertools import product
+import logging
 
 
 class Game:
@@ -13,6 +14,7 @@ class Game:
     :param id: id for the text file (index)
     """
     def __init__(self):
+        logging.basicConfig(level=logging.ERROR)
         self.colors = ["clubs", "diamonds", "spades", "hearts"]
         self.deck_template = {
             "2": {
@@ -378,15 +380,16 @@ class Game:
             outcome
             ):
 
-        # print(
-        #     "Player hand: ", [x.sign for x in self.player_hand],
-        #     "\nPlayer options: ", str(options_player),
-        #     "\nPlayer decision: ", str(decision_player),
-        #     "\n\nDealer hand: ", [x.sign for x in self.dealer_hand[:-1]],
-        #     "\nDealer options: ", str(options_dealer),
-        #     "\nDealer decision: ", str(decision_player),
-        #     "\n\nResult: ", str(outcome)
-        # )
+        logging.debug('\n'.join([
+            f"Player hand: {[x.sign for x in self.player_hand]}",
+            f"Player options: {str(options_player)}",
+            f"Player decision: {str(decision_player)}",
+            f"\nDealer hand: {[x.sign for x in self.dealer_hand[:-1]]}",
+            f"Dealer options: {str(options_dealer)}",
+            f"Dealer decision: {str(decision_player)}",
+            f"\nResult: {str(outcome)}",
+            ])
+        )
         dataset = [
             str([x.sign for x in self.player_hand]),
             str(options_player),
@@ -408,18 +411,6 @@ class Game:
                 self.card_deck.append(
                     Card(sign, self.deck_template[sign]["value"], color)
                 )
-
-
-class Player:
-    pass
-
-
-class Bot:
-    pass
-
-
-class Dealer(Bot):
-    pass
 
 
 class Card:
