@@ -4,6 +4,8 @@ var yourSum = 0;
 var dealerAceCount = 0;
 var yourAceCount = 0; 
 
+var bet = 0;
+
 var hidden;
 var deck;
 
@@ -13,6 +15,11 @@ window.onload = function() {
     buildDeck();
     shuffleDeck();
     startGame();
+}
+
+async function getJSON(url) {
+    json = await (await fetch(url)).json();
+    return json
 }
 
 function buildDeck() {
@@ -67,6 +74,13 @@ function startGame() {
     console.log(yourSum);
     document.getElementById("hit").addEventListener("click", hit);
     document.getElementById("stay").addEventListener("click", stay);
+    document.getElementById("bet5").addEventListener("click", bet5);
+    document.getElementById("bet10").addEventListener("click", bet10);
+    document.getElementById("bet20").addEventListener("click", bet20);
+    document.getElementById("bet50").addEventListener("click", bet50);
+    document.getElementById("bet100").addEventListener("click", bet100);
+
+    document.getElementById("current-bet").innerText = bet;
 
 }
 
@@ -88,7 +102,7 @@ function hit() {
 
 }
 
-function stay() {
+async function stay() {
     dealerSum = reduceAce(dealerSum, dealerAceCount);
     yourSum = reduceAce(yourSum, yourAceCount);
 
@@ -112,10 +126,32 @@ function stay() {
     else if (yourSum < dealerSum) {
         message = "You Lose!";
     }
-
+    card = await getJSON("http://127.0.0.1:5000/game_dealer/card");
+    card = "COLOR: " + card.color + ' VALUE: ' + card.value + ' SIGN: ' + card.sign;
     document.getElementById("dealer-sum").innerText = dealerSum;
     document.getElementById("your-sum").innerText = yourSum;
-    document.getElementById("results").innerText = message;
+    document.getElementById("results").innerText = card
+}
+
+function bet5() {
+    bet += 5;
+    document.getElementById("current-bet").innerText = bet;
+}
+function bet10() {
+    bet += 10;
+    document.getElementById("current-bet").innerText = bet;
+}
+function bet20() {
+    bet += 20;
+    document.getElementById("current-bet").innerText = bet;
+}
+function bet50() {
+    bet += 50;
+    document.getElementById("current-bet").innerText = bet;
+}
+function bet100() {
+    bet += 100;
+    document.getElementById("current-bet").innerText = bet;
 }
 
 function getValue(card) {
