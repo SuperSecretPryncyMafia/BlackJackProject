@@ -1,7 +1,7 @@
 from random import choices, sample
 from itertools import product
 import logging
-
+import requests
 
 class Game:
     """
@@ -106,7 +106,110 @@ class Game:
 
             result = self.check_if_busted(options_player, options_dealer)
             if result != 0:
-                return result
+                return
+
+    def prepare_game(self):
+        self.generate_deck()
+        player_decision = 1
+        dealer_decision = 1
+        self.hit(self.player_hand)
+        self.hit(self.dealer_hand)
+
+        return player_decision, dealer_decision
+
+    def remote_black_jack(self):
+        self.retrieve_start()
+
+        # while True:
+        #     player_decision = self.stay_or_hit_player(player_decision)
+        #     print(player_decision)
+        #     dealer_decision = self.stay_or_hit_dealer(dealer_decision)
+
+        #     options_player = self.calc_score(self.player_hand)
+        #     options_dealer = self.calc_score(self.dealer_hand)
+
+        #     options_dealer = [x for x in options_dealer if x <= 21]
+        #     options_player = [x for x in options_player if x <= 21]
+
+        #     self.show_game_and_chances(options_player, options_dealer)
+
+        #     if player_decision == 0 and dealer_decision == 0:
+        #         result = self.check_when_both_stays(
+        #             options_player,
+        #             options_dealer
+        #         )
+        #         return result
+
+        #     result = self.check_if_busted(options_player, options_dealer)
+        #     if result != 0:
+        #         return result
+
+    def retrieve_one_card(self):
+        self.generate_deck()
+        card = sample(self.card_deck, 1)[0]
+        self.card_deck.remove(card)
+        return {
+            "sign": card.sign,
+            "value": card.value,
+            "color": card.color
+        }
+
+    def retrieve_start(self):
+        player_decision, dealer_decision = self.prepare_game()
+        return {
+            "oponent": {
+                "decision": dealer_decision,
+                "cards": [
+                    {
+                        card: {
+                            "sign": card.sign,
+                            "color": card.color,
+                            "value": card.value
+                        }
+                    } for card in self.dealer_hand
+                ]
+            },
+            "player": {
+                "decision": player_decision,
+                "cards": [
+                    {
+                        card: {
+                            "sign": card.sign,
+                            "color": card.color,
+                            "value": card.value
+                        }
+                    } for card in self.dealer_hand
+                ]
+            }
+        }
+
+    def retrieve_game(self, player_chances, oponent_chances):
+        return {
+            "oponent": {
+                "cards": [
+                    {
+                        card: {
+                            "sign": card.sign,
+                            "color": card.color,
+                            "value": card.value
+                        }
+                    } for card in self.dealer_hand
+                ],
+                "score": max(oponent_chances)
+            },
+            "player": {
+                "cards": [
+                    {
+                        card: {
+                            "sign": card.sign,
+                            "color": card.color,
+                            "value": card.value
+                        }
+                    } for card in self.dealer_hand
+                ],
+                "score": max(player_chances)
+            }
+        }
 
     def random_generator_black_jack(self):
         self.generate_deck()
@@ -228,16 +331,6 @@ class Game:
         card = sample(self.card_deck, 1)[0]
         hand.append(card)
         self.card_deck.remove(card)
-
-    def retrieve_one_card(self):
-        self.generate_deck()
-        card = sample(self.card_deck, 1)[0]
-        self.card_deck.remove(card)
-        return {
-            "sign": card.sign,
-            "value": card.value,
-            "color": card.color
-        }
 
     def reset(self) -> None:
         """
@@ -371,34 +464,6 @@ class Game:
         print("Player: \n{}".format([x.sign for x in self.player_hand]))
         print("Dealer: \n{}".format([x.sign for x in self.dealer_hand]))
         print("\n")
-
-    def retrieve_game(self, player_chances, oponent_chances):
-        return {
-            "oponent": {
-                "cards": [
-                    {
-                        card: {
-                            "sign": card.sign,
-                            "color": card.color,
-                            "value": card.value
-                        }
-                    } for card in self.dealer_hand
-                ],
-                "score": max(oponent_chances)
-            },
-            "player": {
-                "cards": [
-                    {
-                        card: {
-                            "sign": card.sign,
-                            "color": card.color,
-                            "value": card.value
-                        }
-                    } for card in self.dealer_hand
-                ],
-                "score": max(player_chances)
-            }
-        }
 
     def write_results(
             self,

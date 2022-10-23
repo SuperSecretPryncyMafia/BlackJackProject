@@ -12,8 +12,6 @@ var deck;
 var canHit = true; //allows the player (you) to draw while yourSum <= 21
 
 window.onload = function() {
-    buildDeck();
-    shuffleDeck();
     startGame();
 }
 
@@ -35,52 +33,52 @@ function buildDeck() {
     // console.log(deck);
 }
 
-function shuffleDeck() {
-    for (let i = 0; i < deck.length; i++) {
-        let j = Math.floor(Math.random() * deck.length); // (0-1) * 52 => (0-51.9999)
-        let temp = deck[i];
-        deck[i] = deck[j];
-        deck[j] = temp;
-    }
-    console.log(deck);
+function httpGet(urlIn) {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", urlIn);
 }
 
 function startGame() {
-    hidden = deck.pop();
-    dealerSum += getValue(hidden);
-    dealerAceCount += checkAce(hidden);
-    // console.log(hidden);
+    httpGet("http://127.0.0.1:5000/game_dealer/start_game");
+    while (true){
+    }
+    const data = getJSON("http://127.0.0.1:5000/game_dealer/table"); 
+    console.log(data);
+    // hidden = deck.pop();
+    // dealerSum += getValue(hidden);
+    // dealerAceCount += checkAce(hidden);
+    // // console.log(hidden);
+    // // console.log(dealerSum);
+    // while (dealerSum < 17) {
+    //     //<img src="./cards/4-C.png">
+    //     let cardImg = document.createElement("img");
+    //     let card = deck.pop();
+    //     cardImg.src = "game\\static\\cards\\" + card + ".png";
+    //     dealerSum += getValue(card);
+    //     dealerAceCount += checkAce(card);
+    //     document.getElementById("dealer-cards").append(cardImg);
+    // }
     // console.log(dealerSum);
-    while (dealerSum < 17) {
-        //<img src="./cards/4-C.png">
-        let cardImg = document.createElement("img");
-        let card = deck.pop();
-        cardImg.src = "game\\static\\cards\\" + card + ".png";
-        dealerSum += getValue(card);
-        dealerAceCount += checkAce(card);
-        document.getElementById("dealer-cards").append(cardImg);
-    }
-    console.log(dealerSum);
 
-    for (let i = 0; i < 2; i++) {
-        let cardImg = document.createElement("img");
-        let card = deck.pop();
-        cardImg.src = "game\\static\\cards\\" + card + ".png";
-        yourSum += getValue(card);
-        yourAceCount += checkAce(card);
-        document.getElementById("your-cards").append(cardImg);
-    }
+    // for (let i = 0; i < 2; i++) {
+    //     let cardImg = document.createElement("img");
+    //     let card = deck.pop();
+    //     cardImg.src = "game\\static\\cards\\" + card + ".png";
+    //     yourSum += getValue(card);
+    //     yourAceCount += checkAce(card);
+    //     document.getElementById("your-cards").append(cardImg);
+    // }
 
-    console.log(yourSum);
-    document.getElementById("hit").addEventListener("click", hit);
-    document.getElementById("stay").addEventListener("click", stay);
-    document.getElementById("bet5").addEventListener("click", bet5);
-    document.getElementById("bet10").addEventListener("click", bet10);
-    document.getElementById("bet20").addEventListener("click", bet20);
-    document.getElementById("bet50").addEventListener("click", bet50);
-    document.getElementById("bet100").addEventListener("click", bet100);
+    // console.log(yourSum);
+    // document.getElementById("hit").addEventListener("click", hit);
+    // document.getElementById("stay").addEventListener("click", stay);
+    // document.getElementById("bet5").addEventListener("click", bet5);
+    // document.getElementById("bet10").addEventListener("click", bet10);
+    // document.getElementById("bet20").addEventListener("click", bet20);
+    // document.getElementById("bet50").addEventListener("click", bet50);
+    // document.getElementById("bet100").addEventListener("click", bet100);
 
-    document.getElementById("current-bet").innerText = bet;
+    // document.getElementById("current-bet").innerText = bet;
 
 }
 
