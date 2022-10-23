@@ -2,8 +2,15 @@
     margin: auto;
     width: 50%;
     text-align: center;
+    background-color: bisque;
 }
 
+.canvas1 {
+    position: absolute;
+    z-index: -100;
+    top: 0;
+    left: 0;
+}
 
 /* From uiverse.io */
 button {

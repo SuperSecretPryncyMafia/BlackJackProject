@@ -1,9 +1,71 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
         <link rel="stylesheet" type= "text/css" href="{{ url_for('.static',filename='home.css') }}">
+        <link rel="stylesheet" href="{{ url_for('.static',filename='background.js') }}">
     </head>
     <body>
+        <canvas id="canvas1">
+            <script>
+
+                function CreateCard() {
+                    let card = document.createElement("img");  
+                    card.src = "home\\static\\tyl.png";
+                    card.style.left = `${Math.floor(Math.random() * 100)}vw`;
+                    card.style.top = -80;
+                    card.style.position = 'absolute';
+                    card.style.height = "100px";
+                    card.style.width = "75px";
+                    card.style.opacity = 1;
+                    card.style.zIndex = -100;
+                    return card;
+                }
+
+                function FillCards(pos_list, no_of_cards) {
+                    while (cards.length < no_of_cards){
+                        let card = CreateCard();
+                        cards.push(card);
+                        pos_list.push(0);
+                        document.body.append(card);
+                    }
+
+                }
+
+
+
+                const cards = [];
+                var positions = [];
+                /* Sets the number of balls to generate */
+                const numBalls = 10;
+                /* Sets the colors chosen randomly for the balls */
+                FillCards(positions, numBalls);
+                cards.forEach((element, index) => {
+                    if (positions[index] < document.documentElement.clientHeight){
+                        pos = positions[index]
+                        
+                        let animation = element.animate(
+                            [
+                                { transform: "translate(0, 0)" },
+                                { transform: `translate(0, ${pos}em)` }
+                            ],
+                            {
+                                duration: (Math.random() + 1) * 2500,
+                                iterations: Infinity
+                            }
+                        );
+                        positions[index] += 5;
+                        element.style.top += positions[index] + "px";
+                    }
+                    else
+                    {
+                        element.parentNode.removeChild(element);
+                        element = CreateCard();
+                    };
+                });
+
+            </script>
+        </canvas>
         <div class="center_panel">
             <h1>Black Jack</h1>
             <a href=game_dealer>
