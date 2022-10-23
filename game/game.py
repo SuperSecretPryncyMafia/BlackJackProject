@@ -44,3 +44,8 @@ def card():
 @game_blueprint.route("/game_delaer/table", methods=["GET"])
 def table():
     return jsonify(game_blueprint.game.retrieve_game())
+
+
+@game_blueprint.route("/game_dealer/table_hit")
+def table_hit():
+    pass

@@ -372,8 +372,33 @@ class Game:
         print("Dealer: \n{}".format([x.sign for x in self.dealer_hand]))
         print("\n")
 
-    def retrieve_game(self):
-        pass
+    def retrieve_game(self, player_chances, oponent_chances):
+        return {
+            "oponent": {
+                "cards": [
+                    {
+                        card: {
+                            "sign": card.sign,
+                            "color": card.color,
+                            "value": card.value
+                        }
+                    } for card in self.dealer_hand
+                ],
+                "score": max(oponent_chances)
+            },
+            "player": {
+                "cards": [
+                    {
+                        card: {
+                            "sign": card.sign,
+                            "color": card.color,
+                            "value": card.value
+                        }
+                    } for card in self.dealer_hand
+                ],
+                "score": max(player_chances)
+            }
+        }
 
     def write_results(
             self,
