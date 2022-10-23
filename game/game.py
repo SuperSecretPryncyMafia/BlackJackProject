@@ -14,8 +14,8 @@ class GameBlueprint(Blueprint):
         )
         self.game = Game()
 
-    def post_one_card(self):
-        return self.game.post_one_card()
+    def retrieve_one_card(self):
+        return self.game.retrieve_one_card()
 
 
 game_blueprint = GameBlueprint()
@@ -33,9 +33,14 @@ def game_dealer():
 
 @game_blueprint.route("/game_dealer/deck", methods=["GET"])
 def deck():
-    return jsonify({"deck": game_blueprint.post_one_card()})
+    return jsonify({"deck": game_blueprint.retrieve_one_card()})
 
 
 @game_blueprint.route("/game_dealer/card", methods=["GET"])
 def card():
-    return jsonify(game_blueprint.post_one_card())
+    return jsonify(game_blueprint.retrieve_one_card())
+
+
+@game_blueprint.route("/game_delaer/table", methods=["GET"])
+def table():
+    return jsonify(game_blueprint.game.retrieve_game())

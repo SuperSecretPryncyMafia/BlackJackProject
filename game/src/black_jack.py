@@ -229,7 +229,7 @@ class Game:
         hand.append(card)
         self.card_deck.remove(card)
 
-    def post_one_card(self):
+    def retrieve_one_card(self):
         self.generate_deck()
         card = sample(self.card_deck, 1)[0]
         self.card_deck.remove(card)
@@ -371,6 +371,9 @@ class Game:
         print("Player: \n{}".format([x.sign for x in self.player_hand]))
         print("Dealer: \n{}".format([x.sign for x in self.dealer_hand]))
         print("\n")
+
+    def retrieve_game(self):
+        pass
 
     def write_results(
             self,
