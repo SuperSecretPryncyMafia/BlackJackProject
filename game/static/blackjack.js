@@ -40,7 +40,8 @@ function httpGet(urlIn) {
 
 function startGame() {
     httpGet("http://127.0.0.1:5000/game_dealer/start_game");
-    while (true){
+    while (true) {
+        // send decision to FastAPI
     }
     const data = getJSON("http://127.0.0.1:5000/game_dealer/table"); 
     console.log(data);

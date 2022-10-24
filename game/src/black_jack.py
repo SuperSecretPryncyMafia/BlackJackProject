@@ -3,6 +3,7 @@ from itertools import product
 import logging
 import requests
 
+
 class Game:
     """
     Game class possesses all necessary elements of the black jack game
@@ -70,6 +71,7 @@ class Game:
                 "color": self.colors
             }
         }
+        self.decision_made = 0
         self.card_deck = []
         self.player_hand = []
         self.dealer_hand = []
@@ -82,12 +84,12 @@ class Game:
         self.hit(self.player_hand)
         self.hit(self.dealer_hand)
 
-        self.show_game()
+        self.show_game()   # display game
 
         while True:
-            player_decision = self.stay_or_hit_player(player_decision)
+            player_decision = self.stay_or_hit_player(player_decision)  # Add request
             print(player_decision)
-            dealer_decision = self.stay_or_hit_dealer(dealer_decision)
+            dealer_decision = self.stay_or_hit_dealer(dealer_decision)  # Sperate version for model (reading js, earlier setup)
 
             options_player = self.calc_score(self.player_hand)
             options_dealer = self.calc_score(self.dealer_hand)
@@ -95,18 +97,18 @@ class Game:
             options_dealer = [x for x in options_dealer if x <= 21]
             options_player = [x for x in options_player if x <= 21]
 
-            self.show_game_and_chances(options_player, options_dealer)
+            self.show_game_and_chances(options_player, options_dealer)  # display game
 
             if player_decision == 0 and dealer_decision == 0:
                 result = self.check_when_both_stays(
                     options_player,
                     options_dealer
                 )
-                return result
+                return result  # result (redirect to result screen)
 
             result = self.check_if_busted(options_player, options_dealer)
             if result != 0:
-                return
+                return result
 
     def prepare_game(self):
         self.generate_deck()
@@ -118,12 +120,16 @@ class Game:
         return player_decision, dealer_decision
 
     def remote_black_jack(self):
-        self.retrieve_start()
+        player_decision, dealer_decision = self.retrieve_start()
 
-        # while True:
-        #     player_decision = self.stay_or_hit_player(player_decision)
-        #     print(player_decision)
-        #     dealer_decision = self.stay_or_hit_dealer(dealer_decision)
+        while True:
+            while self.decision_made:
+                player_decision = self.stay_or_hit_player(player_decision)
+                self.decision_made = 0
+            else:
+
+                print(player_decision)
+                dealer_decision = self.stay_or_hit_dealer(dealer_decision)
 
         #     options_player = self.calc_score(self.player_hand)
         #     options_dealer = self.calc_score(self.dealer_hand)
@@ -178,7 +184,7 @@ class Game:
                             "color": card.color,
                             "value": card.value
                         }
-                    } for card in self.dealer_hand
+                    } for card in self.player_hand
                 ]
             }
         }
