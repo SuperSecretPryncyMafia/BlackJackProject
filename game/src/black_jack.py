@@ -1,6 +1,7 @@
 from random import choices, sample
 from itertools import product
 import logging
+import threading
 import requests
 
 
@@ -71,6 +72,7 @@ class Game:
                 "color": self.colors
             }
         }
+        # 0 - no decision // 1 - hit // 2 - stand
         self.decision_made = 0
         self.card_deck = []
         self.player_hand = []
@@ -120,6 +122,7 @@ class Game:
         return player_decision, dealer_decision
 
     def remote_black_jack(self):
+
         player_decision, dealer_decision = self.retrieve_start()
 
         while True:
@@ -149,6 +152,9 @@ class Game:
         #     result = self.check_if_busted(options_player, options_dealer)
         #     if result != 0:
         #         return result
+
+    def get_decision(self):
+        pass
 
     def retrieve_one_card(self):
         self.generate_deck()
@@ -518,3 +524,7 @@ class Card:
         self.sign = sign
         self.value = value
         self.color = color
+
+
+if __name__=="__main__":
+    listner = threading.Thread(target=get_decision)
