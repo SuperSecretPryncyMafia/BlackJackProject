@@ -1,6 +1,7 @@
 from random import choices, sample
 from itertools import product
 import logging
+import threading
 import requests
 import numpy as np
 
@@ -72,6 +73,7 @@ class Game:
                 "color": self.colors
             }
         }
+        # 0 - no decision // 1 - hit // 2 - stand
         self.decision_made = 0
         self.card_deck = []
         self.player_hand = []
@@ -169,7 +171,8 @@ class Game:
         #     if result != 0:
         #         return result
 
-        # retrieve game 
+    def get_decision(self):
+        pass
 
     def retrieve_one_card(self):
         self.generate_deck()
@@ -581,3 +584,7 @@ class Card:
         self.sign = sign
         self.value = value
         self.color = color
+
+
+if __name__=="__main__":
+    listner = threading.Thread(target=get_decision)
