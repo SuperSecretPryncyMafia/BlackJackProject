@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, jsonify
 from .src.black_jack import Game
+from keras.models import load_model
 
 
 class GameBlueprint(Blueprint):
@@ -23,6 +24,7 @@ game_blueprint = GameBlueprint()
 
 @game_blueprint.route("/game_bot", methods=["GET"])
 def game_bot():
+    game_blueprint.game.model = load_model('game/model_file')
     return render_template("game/game.html")
 
 

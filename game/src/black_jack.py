@@ -75,6 +75,7 @@ class Game:
         self.card_deck = []
         self.player_hand = []
         self.dealer_hand = []
+        self.model = None
 
     def black_jack(self):
         self.generate_deck()
@@ -87,9 +88,9 @@ class Game:
         self.show_game()   # display game
 
         while True:
-            player_decision = self.stay_or_hit_player(player_decision)  # Add request
+            player_decision = self.stay_or_hit_player(player_decision) 
             print(player_decision)
-            dealer_decision = self.stay_or_hit_dealer(dealer_decision)  # Sperate version for model (reading js, earlier setup)
+            dealer_decision = self.stay_or_hit_dealer(dealer_decision) 
 
             options_player = self.calc_score(self.player_hand)
             options_dealer = self.calc_score(self.dealer_hand)
@@ -120,16 +121,31 @@ class Game:
         return player_decision, dealer_decision
 
     def remote_black_jack(self):
-        player_decision, dealer_decision = self.retrieve_start()
+        game_state = self.retrieve_start()
+        player_decision = game_state["player"]["decision"]
+        dealer_decision = game_state["oponent"]["decision"]
 
         while True:
-            while self.decision_made:
-                player_decision = self.stay_or_hit_player(player_decision)
-                self.decision_made = 0
-            else:
+            game_state = self.get_game_state() # and add request
+            self.decision_made = game_state["player"]["decision_made"]
 
+            while not self.decision_made:
+                game_state = self.get_game_state()
+                player_decision = self.stay_or_hit_player(player_decision)
+                # player_decision = game_state["player"]["decision"] # another option
+                self.decision_made = game_state["player"]["decision_made"]
+            else:
                 print(player_decision)
-                dealer_decision = self.stay_or_hit_dealer(dealer_decision)
+                # they shouldnt change on the other side of the program, so probably unnecessary
+                # self.player_hand = [Card(card["sign"], 
+                #     card["value"], card["color"]) for card in game_state["player"]["hand"]]
+                # self.dealer_hand = [Card(card["sign"], 
+                #     card["value"], card["color"]) for card in game_state["dealer"]["hand"]]
+                if self.model is not None:
+                    dealer_decision = round(self.model.predict("haha")[0][0])
+                else:
+                    dealer_decision = self.stay_or_hit_dealer(dealer_decision) # Sperate version for model (reading js, earlier setup)
+                self.decision_made = 0
 
         #     options_player = self.calc_score(self.player_hand)
         #     options_dealer = self.calc_score(self.dealer_hand)
@@ -149,6 +165,8 @@ class Game:
         #     result = self.check_if_busted(options_player, options_dealer)
         #     if result != 0:
         #         return result
+
+        # retrieve game 
 
     def retrieve_one_card(self):
         self.generate_deck()
@@ -176,6 +194,7 @@ class Game:
                 ]
             },
             "player": {
+                "decision_made": 0,
                 "decision": player_decision,
                 "cards": [
                     {
@@ -204,6 +223,7 @@ class Game:
                 "score": max(oponent_chances)
             },
             "player": {
+                "decision_made": 0,
                 "cards": [
                     {
                         card: {
@@ -216,6 +236,9 @@ class Game:
                 "score": max(player_chances)
             }
         }
+
+    def get_game_state(self):
+        return 
 
     def random_generator_black_jack(self):
         self.generate_deck()
