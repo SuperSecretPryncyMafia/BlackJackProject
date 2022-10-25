@@ -2,6 +2,7 @@ from random import choices, sample
 from itertools import product
 import logging
 import requests
+import numpy as np
 
 
 class Game:
@@ -142,7 +143,9 @@ class Game:
                 # self.dealer_hand = [Card(card["sign"], 
                 #     card["value"], card["color"]) for card in game_state["dealer"]["hand"]]
                 if self.model is not None:
-                    dealer_decision = round(self.model.predict("haha")[0][0])
+                    data = self.prepare_data_for_model()
+                    dealer_decision = round(np.mean(
+                        self.model.predict(data)))
                 else:
                     dealer_decision = self.stay_or_hit_dealer(dealer_decision) # Sperate version for model (reading js, earlier setup)
                 self.decision_made = 0
@@ -177,6 +180,9 @@ class Game:
             "value": card.value,
             "color": card.color
         }
+
+    def prepare_data_for_model(self):
+        return
 
     def retrieve_start(self):
         player_decision, dealer_decision = self.prepare_game()
