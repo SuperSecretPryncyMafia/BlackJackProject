@@ -2,7 +2,6 @@ from random import choices, sample
 from itertools import product
 import logging
 import threading
-import requests
 import numpy as np
 
 
@@ -19,7 +18,10 @@ class Game:
     def __init__(self):
         logging.basicConfig(level=logging.ERROR)
         self.colors = ["clubs", "diamonds", "spades", "hearts"]
-        self.decision_thread = threading.Thread(target=self.stay_or_hit_remote, args=[])
+        self.decision_thread = threading.Thread(
+            target=self.stay_or_hit_remote,
+            args=[]
+        )
         self.deck_template = {
             "2": {
                 "value": [2],
@@ -92,17 +94,17 @@ class Game:
         self.show_game()   # display game
 
         while True:
-            player_decision = self.stay_or_hit_player(player_decision) 
+            player_decision = self.stay_or_hit_player(player_decision)
             print(player_decision)
-            dealer_decision = self.stay_or_hit_dealer(dealer_decision) 
+            dealer_decision = self.stay_or_hit_dealer(dealer_decision)
 
             options_player = self.calc_score(self.player_hand)
             options_dealer = self.calc_score(self.dealer_hand)
 
             options_dealer = [x for x in options_dealer if x <= 21]
             options_player = [x for x in options_player if x <= 21]
-
-            self.show_game_and_chances(options_player, options_dealer)  # display game
+            # display game
+            self.show_game_and_chances(options_player, options_dealer)
 
             if player_decision == 0 and dealer_decision == 0:
                 result = self.check_when_both_stays(
@@ -131,27 +133,36 @@ class Game:
         dealer_decision = game_state["oponent"]["decision"]
         result = 0
         while True:
-            game_state = self.get_game_state() # and add request
+            game_state = self.get_game_state()  # and add request
             self.decision_made = game_state["player"]["decision_made"]
 
             while not self.decision_made:
                 game_state = self.get_game_state()
                 player_decision = self.stay_or_hit_player(player_decision)
-                # player_decision = game_state["player"]["decision"] # another option
+                # player_decision = game_state["player"]["decision"]
+                # another option
                 self.decision_made = game_state["player"]["decision_made"]
             else:
                 print(player_decision)
-                # they shouldnt change on the other side of the program, so probably unnecessary
-                # self.player_hand = [Card(card["sign"], 
-                #     card["value"], card["color"]) for card in game_state["player"]["hand"]]
-                # self.dealer_hand = [Card(card["sign"], 
-                #     card["value"], card["color"]) for card in game_state["dealer"]["hand"]]
+                # they shouldnt change on the other side of the program
+                # probably unnecessary
+                # self.player_hand = [Card(
+                #     card["sign"],
+                #     card["value"],
+                #     card["color"]
+                # ) for card in game_state["player"]["hand"]]
+                # self.dealer_hand = [
+                #     Card(card["sign"],
+                #     card["value"],
+                #     card["color"]
+                # ) for card in game_state["dealer"]["hand"]]
                 if self.model is not None:
                     data = self.prepare_data_for_model()
                     dealer_decision = round(np.mean(
                         self.model.predict(data)))
                 else:
-                    dealer_decision = self.stay_or_hit_dealer(dealer_decision) # Sperate version for model (reading js, earlier setup)
+                    # Sperate version for model (reading js, earlier setup)
+                    dealer_decision = self.stay_or_hit_dealer(dealer_decision)
                 self.decision_made = 0
             if result:
                 break
@@ -198,30 +209,46 @@ class Game:
 
         ov = opponent_visible.shape[0]
         od = options_dealer.shape[0]
-        if ov != 1: # if player has visible ace
+        if ov != 1:  # if player has visible ace
             opponent_card_no = np.repeat(opponent_card_no, 2)
             dealer_card_no = np.repeat(dealer_card_no, 2)
             options_dealer = np.repeat(options_dealer, 2)
-        if od != 1: # dealer has aces too
+        if od != 1:  # dealer has aces too
             opponent_visible = np.repeat(opponent_visible, od)
             dealer_card_no = np.repeat(dealer_card_no, od)
             opponent_card_no = np.repeat(opponent_card_no, od)
 
         opponent_card_no = opponent_card_no.reshape(
-            opponent_card_no[0], -1) 
-        dealer_card_no = dealer_card_no.reshape(
-            dealer_card_no[0], -1) 
-        opponent_visible = opponent_visible.reshape(
-            opponent_visible.shape[0], -1)
-        options_dealer = options_dealer.reshape(
-            options_dealer.shape[0], -1
+            opponent_card_no[0],
+            -1
         )
-        data = np.append(options_dealer, 
-            opponent_visible, axis=1)
-        data = np.append(data,
-            dealer_card_no, axis=1)
-        data = np.append(data, 
-            opponent_card_no, axis=1)
+        dealer_card_no = dealer_card_no.reshape(
+            dealer_card_no[0],
+            -1
+        )
+        opponent_visible = opponent_visible.reshape(
+            opponent_visible.shape[0],
+            -1
+        )
+        options_dealer = options_dealer.reshape(
+            options_dealer.shape[0],
+            -1
+        )
+        data = np.append(
+            options_dealer,
+            opponent_visible,
+            axis=1
+        )
+        data = np.append(
+            data,
+            dealer_card_no,
+            axis=1
+        )
+        data = np.append(
+            data,
+            opponent_card_no,
+            axis=1
+        )
 
         data = data/np.array([20, 10, 8, 8])
         return data
@@ -286,7 +313,7 @@ class Game:
         }
 
     def get_game_state(self):
-        return 
+        return
 
     def random_generator_black_jack(self):
         self.generate_deck()
@@ -591,5 +618,8 @@ class Card:
         self.color = color
 
 
-if __name__=="__main__":
-    listner = threading.Thread(target=get_decision)
+if __name__ == "__main__":
+    black_jack = Game()
+    listner = threading.Thread(
+        target=black_jack.stay_or_hit_remote
+    )
