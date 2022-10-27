@@ -19,6 +19,7 @@ class Game:
     def __init__(self):
         logging.basicConfig(level=logging.ERROR)
         self.colors = ["clubs", "diamonds", "spades", "hearts"]
+        self.decision_thread = threading.Thread(target=self.stay_or_hit_remote, args=[])
         self.deck_template = {
             "2": {
                 "value": [2],
@@ -124,10 +125,11 @@ class Game:
         return player_decision, dealer_decision
 
     def remote_black_jack(self):
+        self.decision_thread.start()
         game_state = self.retrieve_start()
         player_decision = game_state["player"]["decision"]
         dealer_decision = game_state["oponent"]["decision"]
-
+        result = 0
         while True:
             game_state = self.get_game_state() # and add request
             self.decision_made = game_state["player"]["decision_made"]
@@ -151,7 +153,10 @@ class Game:
                 else:
                     dealer_decision = self.stay_or_hit_dealer(dealer_decision) # Sperate version for model (reading js, earlier setup)
                 self.decision_made = 0
+            if result:
+                break
 
+        self.decision_thread.join()
         #     options_player = self.calc_score(self.player_hand)
         #     options_dealer = self.calc_score(self.dealer_hand)
 
@@ -171,7 +176,7 @@ class Game:
         #     if result != 0:
         #         return result
 
-    def get_decision(self):
+    def stay_or_hit_remote(self):
         pass
 
     def retrieve_one_card(self):
