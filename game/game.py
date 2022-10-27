@@ -1,4 +1,8 @@
-from flask import Blueprint, render_template, jsonify
+from flask import (
+    Blueprint,
+    render_template,
+    jsonify
+)
 from .src.black_jack import Game
 from keras.models import load_model
 
@@ -14,6 +18,9 @@ class GameBlueprint(Blueprint):
             import_name=__name__
         )
         self.game = Game()
+
+    def stay_or_hit_remote(self, decision: int):
+        self.game.decision_made = decision
 
     def retrieve_one_card(self):
         return self.game.retrieve_one_card()
@@ -48,11 +55,16 @@ def table():
     return jsonify(game_blueprint.game.retrieve_game(["a"], [1, 10]))
 
 
-@game_blueprint.route("/game_dealer/table_hit")
+@game_blueprint.route("/game_dealer/table_hit", method=["POST"])
 def table_hit():
-    pass
+    game_blueprint.stay_or_hit_remote(2)
+
+
+@game_blueprint.route("/game_dealer/table_stand", method=["POST"])
+def table_stand():
+    game_blueprint.stay_or_hit_remote(1)
 
 
 @game_blueprint.route("/game_dealer/start_game")
 def table_start():
-    pass
+    game_blueprint.game.remote_black_jack()

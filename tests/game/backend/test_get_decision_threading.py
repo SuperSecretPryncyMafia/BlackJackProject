@@ -37,7 +37,6 @@ class TestObjectWithAtribute:
             if self.stop:
                 print("Injecting Virus")
                 print("He is SO BIG!\nHEEeeEEe@#ell ^ll l p #%^.   . $%^ ^&*()    .")
-                break
             time.sleep(0.25)
             self.count += 1
             print(self.count)

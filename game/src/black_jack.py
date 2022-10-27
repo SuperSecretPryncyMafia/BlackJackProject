@@ -138,12 +138,12 @@ class Game:
 
             while not self.decision_made:
                 game_state = self.get_game_state()
-                player_decision = self.stay_or_hit_player(player_decision)
+                self.player_decision = self.decision_made - 1
                 # player_decision = game_state["player"]["decision"]
                 # another option
-                self.decision_made = game_state["player"]["decision_made"]
+                # self.decision_made = game_state["player"]["decision_made"]
             else:
-                print(player_decision)
+                # print(player_decision)
                 # they shouldnt change on the other side of the program
                 # probably unnecessary
                 # self.player_hand = [Card(
@@ -156,16 +156,33 @@ class Game:
                 #     card["value"],
                 #     card["color"]
                 # ) for card in game_state["dealer"]["hand"]]
-                if self.model is not None:
-                    data = self.prepare_data_for_model()
-                    dealer_decision = round(np.mean(
-                        self.model.predict(data)))
-                else:
-                    # Sperate version for model (reading js, earlier setup)
-                    dealer_decision = self.stay_or_hit_dealer(dealer_decision)
+                # if self.model is not None:
+                #     data = self.prepare_data_for_model()
+                #     dealer_decision = round(np.mean(
+                #         self.model.predict(data)))
+                # else:
+                #     # Sperate version for model (reading js, earlier setup)
+                options_player = self.calc_score(self.player_hand)
+                options_dealer = self.calc_score(self.dealer_hand)
+
+                options_dealer = [x for x in options_dealer if x <= 21]
+                options_player = [x for x in options_player if x <= 21]
+
+                dealer_decision = self.stay_or_hit_dealer(dealer_decision)
+
                 self.decision_made = 0
-            if result:
-                break
+                if player_decision == 0 and dealer_decision == 0:
+                    result = self.check_when_both_stays(
+                        options_player,
+                        options_dealer
+                    )
+                    self.decision_thread.join()
+                    return result
+
+                result = self.check_if_busted(options_player, options_dealer)
+                if result != 0:
+                    self.decision_thread.join()
+                    return result
 
         self.decision_thread.join()
         #     options_player = self.calc_score(self.player_hand)
@@ -188,7 +205,9 @@ class Game:
         #         return result
 
     def stay_or_hit_remote(self):
-        pass
+        while True:
+            if self.decision_made == 0:
+                pass
 
     def retrieve_one_card(self):
         self.generate_deck()
