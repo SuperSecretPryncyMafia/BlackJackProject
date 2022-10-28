@@ -4,6 +4,7 @@ from itertools import product
 import logging
 import threading
 import numpy as np
+from keras.models import load_model
 
 
 class Game:
@@ -664,6 +665,7 @@ class NeuralBlackJack(RemoteBlackJack):
     bot_engine = "Neural"
     def __init__(self):
         super().__init__()
+        self.model = load_model('game/model_file')
 
     def stay_or_hit_dealer(self, decision):
         return super().stay_or_hit_dealer(decision)
