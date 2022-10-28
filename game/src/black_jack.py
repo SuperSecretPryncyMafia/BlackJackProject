@@ -639,6 +639,7 @@ class RemoteBlackJack(Game):
         player_decision, bot_decision = self.prepare_game()
         self.update_frontend()
         result = self.round()
+        return result
 
     def prepare_game(self):
         super().generate_deck()
@@ -653,8 +654,11 @@ class RemoteBlackJack(Game):
     def round(self, bot_engine):
         pass
 
-    def stay_or_hit_remote(self, decision):
-        pass
+    def stay_or_hit_remote(self):
+        while True:
+            data = self.getData()
+            if data["player"]["decision"] != 0:
+                self.decision_made = data["player"]["decision"]
 
     def update_frontend(self):
         pass
