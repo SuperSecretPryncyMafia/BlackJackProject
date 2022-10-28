@@ -114,17 +114,7 @@ class Game:
             if result != 0:
                 return result
 
-    def prepare_game(self):
-        self.generate_deck()
-        player_decision = 1
-        dealer_decision = 1
-        self.hit(self.player_hand)
-        self.hit(self.dealer_hand)
-
-        return player_decision, dealer_decision
-
     def remote_black_jack(self):
-        self.decision_thread.start()
         game_state = self.retrieve_start()
         player_decision = game_state["player"]["decision"]
         dealer_decision = game_state["oponent"]["decision"]
@@ -644,27 +634,62 @@ class RemoteBlackJack(Game):
             target=self.stay_or_hit_remote,
             args=[]
         )
-    
+
+    def remote_black_jack(self):
+        player_decision, bot_decision = self.prepare_game()
+        self.update_frontend()
+        result = self.round()
+
+    def prepare_game(self):
+        super().generate_deck()
+        player_decision = 1
+        dealer_decision = 1
+        self.hit(self.player_hand)
+        self.hit(self.dealer_hand)
+
+        return player_decision, dealer_decision
+
+    @abstractmethod
+    def round(self, bot_engine):
+        pass
+
     def stay_or_hit_remote(self, decision):
+        pass
+
+    def update_frontend(self):
         pass
 
 
 class NeuralBlackJack(RemoteBlackJack):
+    bot_engine = "Neural"
     def __init__(self):
         super().__init__()
 
     def stay_or_hit_dealer(self, decision):
         return super().stay_or_hit_dealer(decision)
+
+    def round(self):
+        pass
 
 
 class ClassicBlackJack(RemoteBlackJack):
+    bot_engine = "Classic"
     def __init__(self):
         super().__init__()
 
     def stay_or_hit_dealer(self, decision):
         return super().stay_or_hit_dealer(decision)
     
-    
+    def round(self):
+        while True:
+            while not self.decision_made:
+                continue
+            else:
+                self.decision_made = 0
+                self.tour()
+
+    def tour(self):
+        pass
 
 
 if __name__ == "__main__":
