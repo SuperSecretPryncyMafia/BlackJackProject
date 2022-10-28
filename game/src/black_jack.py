@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from random import choices, sample
 from itertools import product
 import logging
@@ -18,10 +19,6 @@ class Game:
     def __init__(self):
         logging.basicConfig(level=logging.ERROR)
         self.colors = ["clubs", "diamonds", "spades", "hearts"]
-        self.decision_thread = threading.Thread(
-            target=self.stay_or_hit_remote,
-            args=[]
-        )
         self.deck_template = {
             "2": {
                 "value": [2],
@@ -635,6 +632,43 @@ class Card:
         self.sign = sign
         self.value = value
         self.color = color
+
+class RemoteBlackJack(Game):
+    def __init__(self):
+        self.decision_thread = None
+        super().__init__()
+
+    def spawn_decision_thread(self):    
+        self.decision_thread = threading.Thread(
+            target=self.stay_or_hit_remote,
+            args=[]
+        )
+    
+    @abstractmethod
+    def stay_or_hit_remote(self, decision):
+        pass
+
+class NeuralBlackJack(RemoteBlackJack):
+    def __init__(self):
+        super().__init__()
+
+    def stay_or_hit_dealer(self, decision):
+        return super().stay_or_hit_dealer(decision)
+
+    def stay_or_hit_remote(self, decision):
+        pass
+
+class NeuralBlackJack(RemoteBlackJack):
+    def __init__(self):
+        super().__init__()
+
+    def stay_or_hit_remote(self, decision):
+        pass
+
+    def stay_or_hit_dealer(self, decision):
+        return super().stay_or_hit_dealer(decision)
+    
+    
 
 
 if __name__ == "__main__":
