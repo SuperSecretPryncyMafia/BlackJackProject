@@ -633,6 +633,7 @@ class Card:
         self.value = value
         self.color = color
 
+
 class RemoteBlackJack(Game):
     def __init__(self):
         self.decision_thread = None
@@ -644,9 +645,9 @@ class RemoteBlackJack(Game):
             args=[]
         )
     
-    @abstractmethod
     def stay_or_hit_remote(self, decision):
         pass
+
 
 class NeuralBlackJack(RemoteBlackJack):
     def __init__(self):
@@ -655,15 +656,10 @@ class NeuralBlackJack(RemoteBlackJack):
     def stay_or_hit_dealer(self, decision):
         return super().stay_or_hit_dealer(decision)
 
-    def stay_or_hit_remote(self, decision):
-        pass
 
-class NeuralBlackJack(RemoteBlackJack):
+class ClassicBlackJack(RemoteBlackJack):
     def __init__(self):
         super().__init__()
-
-    def stay_or_hit_remote(self, decision):
-        pass
 
     def stay_or_hit_dealer(self, decision):
         return super().stay_or_hit_dealer(decision)
