@@ -605,9 +605,6 @@ class RemoteBlackJack(Game):
     def stay_or_hit_remote(self, decision):
         pass
 
-    def stay_or_hit_dealer(self, decision):
-        pass
-
     def update_frontend(self):
         pass
 
@@ -617,12 +614,6 @@ class NeuralBlackJack(RemoteBlackJack):
     def __init__(self):
         super().__init__()
         self.model = load_model('game/model_file')
-
-    def stay_or_hit_remote(self, decision):
-        data = self.prepare_data_for_model()
-        decision = round(np.mean(
-            self.model.predict(data)))
-        return decision
 
     def prepare_data_for_model(self):
         opponent_card_no = np.array([len(self.player_hand)])
@@ -678,8 +669,10 @@ class NeuralBlackJack(RemoteBlackJack):
         return data
 
     def stay_or_hit_dealer(self, decision):
-        
-        return 
+        data = self.prepare_data_for_model()
+        decision = round(np.mean(
+            self.model.predict(data)))
+        return decision
 
     def round(self):
         pass
@@ -689,9 +682,6 @@ class ClassicBlackJack(RemoteBlackJack):
     bot_engine = "Classic"
     def __init__(self):
         super().__init__()
-    
-    def stay_or_hit_remote(self, decision):
-        return super().stay_or_hit_remote(decision)
 
     def stay_or_hit_dealer(self, decision):
         return super().stay_or_hit_dealer(decision)
