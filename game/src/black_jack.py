@@ -1,8 +1,9 @@
-from abc import abstractmethod
-from random import choices, sample
-from itertools import product
 import logging
 import threading
+from abc import abstractmethod
+from itertools import product
+from random import choices, sample
+
 import numpy as np
 from keras.models import load_model
 
@@ -206,7 +207,6 @@ class Game:
             "value": card.value,
             "color": card.color
         }
-
 
     def retrieve_start(self):
         player_decision, dealer_decision = self.prepare_game()
@@ -621,7 +621,7 @@ class NeuralBlackJack(RemoteBlackJack):
         visible = np.array(hand[0].value)
         options = self.calc_score(hand)
         return card_no, visible, options
-    
+
     def if_ace(self, card_no_1, card_no_2, view, ace_no=2):
         card_no_1 = np.repeat(card_no_1, ace_no)
         card_no_2 = np.repeat(card_no_2, ace_no)
@@ -629,29 +629,28 @@ class NeuralBlackJack(RemoteBlackJack):
         return card_no_1, card_no_2, view
 
     def prepare_data_for_model(self):
-
         bot_card_no, _, options_bot = self.get_hand_info(self.dealer_hand)
-        player_card_no, player_visible, _ = self.get_hand_info(self.player_hand)
+        player_card_no, player_view, _ = self.get_hand_info(self.player_hand)
 
-        pv = player_visible.shape[0]
+        pv = player_view.shape[0]
         od = options_bot.shape[0]
         if pv != 1:  # if player has visible ace
             player_card_no, bot_card_no, options_bot = self.if_ace(
-                player_card_no, 
-                bot_card_no, 
+                player_card_no,
+                bot_card_no,
                 options_bot
             )
         if od != 1:  # dealer has aces too
-            player_card_no, bot_card_no, player_visible = self.if_ace(
-                player_card_no, 
-                bot_card_no, 
-                player_visible,
+            player_card_no, bot_card_no, player_view = self.if_ace(
+                player_card_no,
+                bot_card_no,
+                player_view,
                 od
             )
 
         data = options_bot.reshape(options_bot.shape[0], -1)
 
-        for column in [player_visible, bot_card_no, player_card_no]:
+        for column in [player_view, bot_card_no, player_card_no]:
             column = column.reshape(column.shape[0], -1)
             data = np.append(data, column, axis=1)
 

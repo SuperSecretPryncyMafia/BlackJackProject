@@ -1,8 +1,5 @@
-from flask import (
-    Blueprint,
-    render_template,
-    jsonify
-)
+from flask import Blueprint, jsonify, render_template
+
 from .src.black_jack import Game
 
 
