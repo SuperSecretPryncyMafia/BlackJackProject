@@ -38,10 +38,15 @@ function httpGet(urlIn) {
     xmlHttp.open("GET", urlIn);
 }
 
+function httpPost(urlIn) {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("POST", urlIn)
+}
+
 function startGame() {
     httpGet("http://127.0.0.1:5000/game_dealer/start_game");
     while (true) {
-        httpGet()
+        httpPost("http://127.0.0.1:5000/game_dealer/table_hit");
     }
     const data = getJSON("http://127.0.0.1:5000/game_dealer/table"); 
     console.log(data);
