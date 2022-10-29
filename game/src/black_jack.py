@@ -615,55 +615,47 @@ class NeuralBlackJack(RemoteBlackJack):
         super().__init__()
         self.model = load_model('game/model_file')
 
+    def get_hand_info(self, hand):
+        card_no = np.array([len(hand)])
+        visible = np.array(hand[0].value)
+        options = self.calc_score(hand)
+        return card_no, visible, options
+    
+    def if_ace(self, card_no_1, card_no_2, view, ace_no=2):
+        card_no_1 = np.repeat(card_no_1, ace_no)
+        card_no_2 = np.repeat(card_no_2, ace_no)
+        view = np.repeat(view, ace_no)
+        return card_no_1, card_no_2, view
+
+    def reshape_columns(self):
+        pass
+
     def prepare_data_for_model(self):
-        opponent_card_no = np.array([len(self.player_hand)])
-        dealer_card_no = np.array([len(self.dealer_hand)])
-        opponent_visible = np.array(self.player_hand[0].value)
-        options_dealer = self.calc_score(self.dealer_hand)
-        options_dealer = np.array([x for x in options_dealer if x <= 21])
 
-        ov = opponent_visible.shape[0]
-        od = options_dealer.shape[0]
-        if ov != 1:  # if player has visible ace
-            opponent_card_no = np.repeat(opponent_card_no, 2)
-            dealer_card_no = np.repeat(dealer_card_no, 2)
-            options_dealer = np.repeat(options_dealer, 2)
+        bot_card_no, _, options_bot = self.get_hand_info(self.dealer_hand)
+        player_card_no, player_visible, _ = self.get_hand_info(self.player_hand)
+
+        pv = player_visible.shape[0]
+        od = options_bot.shape[0]
+        if pv != 1:  # if player has visible ace
+            player_card_no, bot_card_no, options_bot = self.if_ace(
+                player_card_no, 
+                bot_card_no, 
+                options_bot
+            )
         if od != 1:  # dealer has aces too
-            opponent_visible = np.repeat(opponent_visible, od)
-            dealer_card_no = np.repeat(dealer_card_no, od)
-            opponent_card_no = np.repeat(opponent_card_no, od)
+            player_card_no, bot_card_no, player_visible = self.if_ace(
+                player_card_no, 
+                bot_card_no, 
+                player_visible,
+                od
+            )
 
-        opponent_card_no = opponent_card_no.reshape(
-            opponent_card_no[0],
-            -1
-        )
-        dealer_card_no = dealer_card_no.reshape(
-            dealer_card_no[0],
-            -1
-        )
-        opponent_visible = opponent_visible.reshape(
-            opponent_visible.shape[0],
-            -1
-        )
-        options_dealer = options_dealer.reshape(
-            options_dealer.shape[0],
-            -1
-        )
-        data = np.append(
-            options_dealer,
-            opponent_visible,
-            axis=1
-        )
-        data = np.append(
-            data,
-            dealer_card_no,
-            axis=1
-        )
-        data = np.append(
-            data,
-            opponent_card_no,
-            axis=1
-        )
+        data = options_bot.reshape(options_bot.shape[0], -1)
+
+        for column in [player_visible, bot_card_no, player_card_no]:
+            column = column.reshape(column.shape[0], -1)
+            data = np.append(data, column, axis=1)
 
         data = data/np.array([20, 10, 8, 8])
         return data
