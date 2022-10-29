@@ -628,9 +628,6 @@ class NeuralBlackJack(RemoteBlackJack):
         view = np.repeat(view, ace_no)
         return card_no_1, card_no_2, view
 
-    def reshape_columns(self):
-        pass
-
     def prepare_data_for_model(self):
 
         bot_card_no, _, options_bot = self.get_hand_info(self.dealer_hand)
