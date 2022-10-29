@@ -621,7 +621,7 @@ class NeuralBlackJack(RemoteBlackJack):
         visible = np.array(hand[0].value)
         options = self.calc_score(hand)
         return card_no, visible, options
-    
+
     def if_ace(self, card_no_1, card_no_2, view, ace_no=2):
         card_no_1 = np.repeat(card_no_1, ace_no)
         card_no_2 = np.repeat(card_no_2, ace_no)
@@ -637,14 +637,14 @@ class NeuralBlackJack(RemoteBlackJack):
         od = options_bot.shape[0]
         if pv != 1:  # if player has visible ace
             player_card_no, bot_card_no, options_bot = self.if_ace(
-                player_card_no, 
-                bot_card_no, 
+                player_card_no,
+                bot_card_no,
                 options_bot
             )
         if od != 1:  # dealer has aces too
             player_card_no, bot_card_no, player_visible = self.if_ace(
-                player_card_no, 
-                bot_card_no, 
+                player_card_no,
+                bot_card_no,
                 player_visible,
                 od
             )
