@@ -55,12 +55,12 @@ def table():
 
 @game_blueprint.route("/game_dealer/table_hit", method=["POST"])
 def table_hit():
-    game_blueprint.stay_or_hit_remote(2)
+    game_blueprint.game.decision_made = 2
 
 
 @game_blueprint.route("/game_dealer/table_stand", method=["POST"])
 def table_stand():
-    game_blueprint.stay_or_hit_remote(1)
+    game_blueprint.game.decision_made = 1
 
 
 @game_blueprint.route("/game_dealer/start_game")

@@ -578,7 +578,7 @@ class RemoteBlackJack(Game):
         self.decision_thread = None
         super().__init__()
 
-    def spawn_decision_thread(self):    
+    def spawn_decision_thread(self):
         self.decision_thread = threading.Thread(
             target=self.stay_or_hit_remote,
             args=[]
@@ -611,6 +611,7 @@ class RemoteBlackJack(Game):
 
 class NeuralBlackJack(RemoteBlackJack):
     bot_engine = "Neural"
+
     def __init__(self):
         super().__init__()
         self.model = load_model('game/model_file')
@@ -672,12 +673,13 @@ class NeuralBlackJack(RemoteBlackJack):
 
 class ClassicBlackJack(RemoteBlackJack):
     bot_engine = "Classic"
+
     def __init__(self):
         super().__init__()
 
     def stay_or_hit_dealer(self, decision):
         return super().stay_or_hit_dealer(decision)
-    
+
     def round(self):
         while True:
             while not self.decision_made:
