@@ -78,47 +78,47 @@ class Game:
         self.decision_made = 0
         self.card_deck = []
         self.player_hand = []
-        self.dealer_hand = []
+        self.bot_hand = []
         self.model = None
 
     def black_jack(self):
         self.generate_deck()
         player_decision = 1
-        dealer_decision = 1
+        bot_decision = 1
 
         self.hit(self.player_hand)
-        self.hit(self.dealer_hand)
+        self.hit(self.bot_hand)
 
         self.show_game()   # display game
 
         while True:
             player_decision = self.stay_or_hit_player(player_decision)
             print(player_decision)
-            dealer_decision = self.stay_or_hit_dealer(dealer_decision)
+            bot_decision = self.stay_or_hit_bot(bot_decision)
 
             options_player = self.calc_score(self.player_hand)
-            options_dealer = self.calc_score(self.dealer_hand)
+            options_bot = self.calc_score(self.bot_hand)
 
-            options_dealer = [x for x in options_dealer if x <= 21]
+            options_bot = [x for x in options_bot if x <= 21]
             options_player = [x for x in options_player if x <= 21]
             # display game
-            self.show_game_and_chances(options_player, options_dealer)
+            self.show_game_and_chances(options_player, options_bot)
 
-            if player_decision == 0 and dealer_decision == 0:
+            if player_decision == 0 and bot_decision == 0:
                 result = self.check_when_both_stays(
                     options_player,
-                    options_dealer
+                    options_bot
                 )
                 return result  # result (redirect to result screen)
 
-            result = self.check_if_busted(options_player, options_dealer)
+            result = self.check_if_busted(options_player, options_bot)
             if result != 0:
                 return result
 
     def remote_black_jack(self):
         game_state = self.retrieve_start()
         player_decision = game_state["player"]["decision"]
-        dealer_decision = game_state["oponent"]["decision"]
+        bot_decision = game_state["oponent"]["decision"]
         result = 0
         while True:
             game_state = self.get_game_state()  # and add request
@@ -139,56 +139,56 @@ class Game:
                 #     card["value"],
                 #     card["color"]
                 # ) for card in game_state["player"]["hand"]]
-                # self.dealer_hand = [
+                # self.bot_hand = [
                 #     Card(card["sign"],
                 #     card["value"],
                 #     card["color"]
-                # ) for card in game_state["dealer"]["hand"]]
+                # ) for card in game_state["bot"]["hand"]]
                 # if self.model is not None:
                 #     data = self.prepare_data_for_model()
-                #     dealer_decision = round(np.mean(
+                #     bot_decision = round(np.mean(
                 #         self.model.predict(data)))
                 # else:
                 #     # Sperate version for model (reading js, earlier setup)
                 options_player = self.calc_score(self.player_hand)
-                options_dealer = self.calc_score(self.dealer_hand)
+                options_bot = self.calc_score(self.bot_hand)
 
-                options_dealer = [x for x in options_dealer if x <= 21]
+                options_bot = [x for x in options_bot if x <= 21]
                 options_player = [x for x in options_player if x <= 21]
 
-                dealer_decision = self.stay_or_hit_dealer(dealer_decision)
+                bot_decision = self.stay_or_hit_bot(bot_decision)
 
                 self.decision_made = 0
-                if player_decision == 0 and dealer_decision == 0:
+                if player_decision == 0 and bot_decision == 0:
                     result = self.check_when_both_stays(
                         options_player,
-                        options_dealer
+                        options_bot
                     )
                     self.decision_thread.join()
                     return result
 
-                result = self.check_if_busted(options_player, options_dealer)
+                result = self.check_if_busted(options_player, options_bot)
                 if result != 0:
                     self.decision_thread.join()
                     return result
 
         self.decision_thread.join()
         #     options_player = self.calc_score(self.player_hand)
-        #     options_dealer = self.calc_score(self.dealer_hand)
+        #     options_bot = self.calc_score(self.bot_hand)
 
-        #     options_dealer = [x for x in options_dealer if x <= 21]
+        #     options_bot = [x for x in options_bot if x <= 21]
         #     options_player = [x for x in options_player if x <= 21]
 
-        #     self.show_game_and_chances(options_player, options_dealer)
+        #     self.show_game_and_chances(options_player, options_bot)
 
-        #     if player_decision == 0 and dealer_decision == 0:
+        #     if player_decision == 0 and bot_decision == 0:
         #         result = self.check_when_both_stays(
         #             options_player,
-        #             options_dealer
+        #             options_bot
         #         )
         #         return result
 
-        #     result = self.check_if_busted(options_player, options_dealer)
+        #     result = self.check_if_busted(options_player, options_bot)
         #     if result != 0:
         #         return result
 
@@ -209,10 +209,10 @@ class Game:
 
 
     def retrieve_start(self):
-        player_decision, dealer_decision = self.prepare_game()
+        player_decision, bot_decision = self.prepare_game()
         return {
             "oponent": {
-                "decision": dealer_decision,
+                "decision": bot_decision,
                 "cards": [
                     {
                         card: {
@@ -220,7 +220,7 @@ class Game:
                             "color": card.color,
                             "value": card.value
                         }
-                    } for card in self.dealer_hand
+                    } for card in self.bot_hand
                 ]
             },
             "player": {
@@ -248,7 +248,7 @@ class Game:
                             "color": card.color,
                             "value": card.value
                         }
-                    } for card in self.dealer_hand
+                    } for card in self.bot_hand
                 ],
                 "score": max(oponent_chances)
             },
@@ -261,7 +261,7 @@ class Game:
                             "color": card.color,
                             "value": card.value
                         }
-                    } for card in self.dealer_hand
+                    } for card in self.bot_hand
                 ],
                 "score": max(player_chances)
             }
@@ -273,12 +273,12 @@ class Game:
     def random_generator_black_jack(self):
         self.generate_deck()
         player_decision = 1
-        dealer_decision = 1
+        bot_decision = 1
 
         self.hit(self.player_hand)
-        self.hit(self.dealer_hand)
+        self.hit(self.bot_hand)
         previous_player_score = self.calc_score(self.player_hand)
-        previous_dealer_score = self.calc_score(self.dealer_hand)
+        previous_bot_score = self.calc_score(self.bot_hand)
 
         while True:
 
@@ -287,40 +287,40 @@ class Game:
                 player_decision,
                 previous_player_score
             )
-            dealer_decision = self.random_stay_or_hit(
+            bot_decision = self.random_stay_or_hit(
                 False,
-                dealer_decision,
-                previous_dealer_score
+                bot_decision,
+                previous_bot_score
             )
 
             options_player = self.calc_score(self.player_hand)
-            options_dealer = self.calc_score(self.dealer_hand)
+            options_bot = self.calc_score(self.bot_hand)
 
             options_player = [x for x in options_player if x <= 21]
-            options_dealer = [x for x in options_dealer if x <= 21]
+            options_bot = [x for x in options_bot if x <= 21]
 
-            if dealer_decision + player_decision == 0:
+            if bot_decision + player_decision == 0:
                 result = self.check_when_both_stays_quiet(
                     options_player,
-                    options_dealer
+                    options_bot
                 )
                 self.write_results(
                     previous_player_score,
                     player_decision,
-                    previous_dealer_score,
-                    dealer_decision,
+                    previous_bot_score,
+                    bot_decision,
                     result
                 )
                 self.reset()
                 return result
 
-            result = self.check_if_busted_quiet(options_player, options_dealer)
+            result = self.check_if_busted_quiet(options_player, options_bot)
 
             self.write_results(
                     previous_player_score,
                     player_decision,
-                    previous_dealer_score,
-                    dealer_decision,
+                    previous_bot_score,
+                    bot_decision,
                     result
                 )
 
@@ -329,11 +329,11 @@ class Game:
                 return result
 
             previous_player_score = max(options_player)
-            previous_dealer_score = max(options_dealer)
+            previous_bot_score = max(options_bot)
 
-    def stay_or_hit_dealer(self, decision):
+    def stay_or_hit_bot(self, decision):
         if decision == 1:
-            current_options = self.calc_score(self.dealer_hand)
+            current_options = self.calc_score(self.bot_hand)
             current_options = [x for x in current_options if x < 21]
 
             if len(current_options):
@@ -342,7 +342,7 @@ class Game:
                 return 0
 
             if current_max <= 16:
-                self.hit(self.dealer_hand)
+                self.hit(self.bot_hand)
                 return 1
             elif current_max > 16:
                 return 0
@@ -363,7 +363,7 @@ class Game:
                 if player:
                     self.hit(self.player_hand)
                 else:
-                    self.hit(self.dealer_hand)
+                    self.hit(self.bot_hand)
             return stay_or_hit[0]
         else:
             return decision
@@ -393,10 +393,10 @@ class Game:
 
     def reset(self) -> None:
         """
-        We need to reset hands of the dealer and the player for the next round
+        We need to reset hands of the bot and the player for the next round
         """
         self.player_hand = []
-        self.dealer_hand = []
+        self.bot_hand = []
 
     def calc_score(self, hand: list) -> list:
         """
@@ -502,7 +502,7 @@ class Game:
         else:
             return 1
 
-    def show_game_and_chances(self, player_chances, dealer_chances):
+    def show_game_and_chances(self, player_chances, bot_chances):
         print("\n")
         print(
             "Player: \n{} --> {}".format(
@@ -511,9 +511,9 @@ class Game:
             )
         )
         print(
-            "Dealer: \n{} --> {}".format(
-                [x.sign for x in self.dealer_hand],
-                dealer_chances
+            "bot: \n{} --> {}".format(
+                [x.sign for x in self.bot_hand],
+                bot_chances
             )
         )
         print("\n")
@@ -521,15 +521,15 @@ class Game:
     def show_game(self):
         print("\n")
         print("Player: \n{}".format([x.sign for x in self.player_hand]))
-        print("Dealer: \n{}".format([x.sign for x in self.dealer_hand]))
+        print("bot: \n{}".format([x.sign for x in self.bot_hand]))
         print("\n")
 
     def write_results(
             self,
             options_player,
             decision_player,
-            options_dealer,
-            decision_dealer,
+            options_bot,
+            decision_bot,
             outcome
             ):
 
@@ -537,9 +537,9 @@ class Game:
             f"Player hand: {[x.sign for x in self.player_hand]}",
             f"Player options: {str(options_player)}",
             f"Player decision: {str(decision_player)}",
-            f"\nDealer hand: {[x.sign for x in self.dealer_hand[:-1]]}",
-            f"Dealer options: {str(options_dealer)}",
-            f"Dealer decision: {str(decision_player)}",
+            f"\nbot hand: {[x.sign for x in self.bot_hand[:-1]]}",
+            f"bot options: {str(options_bot)}",
+            f"bot decision: {str(decision_player)}",
             f"\nResult: {str(outcome)}",
             ])
         )
@@ -547,9 +547,9 @@ class Game:
             str([x.sign for x in self.player_hand]),
             str(options_player),
             str(decision_player),
-            str([x.sign for x in self.dealer_hand]),
-            str(options_dealer),
-            str(decision_dealer),
+            str([x.sign for x in self.bot_hand]),
+            str(options_bot),
+            str(decision_bot),
             str(outcome),
             "\n"
         ]
@@ -576,6 +576,8 @@ class Card:
 class RemoteBlackJack(Game):
     def __init__(self):
         self.decision_thread = None
+        self.player_decision = 1
+        self.bot_decision = 1
         super().__init__()
 
     def spawn_decision_thread(self):
@@ -585,25 +587,23 @@ class RemoteBlackJack(Game):
         )
 
     def remote_black_jack(self):
-        player_decision, bot_decision = self.prepare_game()
+        self.prepare_game()
         self.update_frontend()
         result = self.round()
 
     def prepare_game(self):
         super().generate_deck()
-        player_decision = 1
-        dealer_decision = 1
+        self.player_decision = 1
+        self.bot_decision = 1
         self.hit(self.player_hand)
-        self.hit(self.dealer_hand)
-
-        return player_decision, dealer_decision
+        self.hit(self.bot_hand)
 
     @abstractmethod
     def round(self, bot_engine):
         pass
 
-    def stay_or_hit_remote(self, decision):
-        pass
+    def stay_or_hit_remote(self):
+        decison = 
 
     def update_frontend(self):
         pass
@@ -618,46 +618,46 @@ class NeuralBlackJack(RemoteBlackJack):
 
     def prepare_data_for_model(self):
         opponent_card_no = np.array([len(self.player_hand)])
-        dealer_card_no = np.array([len(self.dealer_hand)])
+        bot_card_no = np.array([len(self.bot_hand)])
         opponent_visible = np.array(self.player_hand[0].value)
-        options_dealer = self.calc_score(self.dealer_hand)
-        options_dealer = np.array([x for x in options_dealer if x <= 21])
+        options_bot = self.calc_score(self.bot_hand)
+        options_bot = np.array([x for x in options_bot if x <= 21])
 
         ov = opponent_visible.shape[0]
-        od = options_dealer.shape[0]
+        od = options_bot.shape[0]
         if ov != 1:  # if player has visible ace
             opponent_card_no = np.repeat(opponent_card_no, 2)
-            dealer_card_no = np.repeat(dealer_card_no, 2)
-            options_dealer = np.repeat(options_dealer, 2)
-        if od != 1:  # dealer has aces too
+            bot_card_no = np.repeat(bot_card_no, 2)
+            options_bot = np.repeat(options_bot, 2)
+        if od != 1:  # bot has aces too
             opponent_visible = np.repeat(opponent_visible, od)
-            dealer_card_no = np.repeat(dealer_card_no, od)
+            bot_card_no = np.repeat(bot_card_no, od)
             opponent_card_no = np.repeat(opponent_card_no, od)
 
         opponent_card_no = opponent_card_no.reshape(
             opponent_card_no[0],
             -1
         )
-        dealer_card_no = dealer_card_no.reshape(
-            dealer_card_no[0],
+        bot_card_no = bot_card_no.reshape(
+            bot_card_no[0],
             -1
         )
         opponent_visible = opponent_visible.reshape(
             opponent_visible.shape[0],
             -1
         )
-        options_dealer = options_dealer.reshape(
-            options_dealer.shape[0],
+        options_bot = options_bot.reshape(
+            options_bot.shape[0],
             -1
         )
         data = np.append(
-            options_dealer,
+            options_bot,
             opponent_visible,
             axis=1
         )
         data = np.append(
             data,
-            dealer_card_no,
+            bot_card_no,
             axis=1
         )
         data = np.append(
@@ -669,7 +669,7 @@ class NeuralBlackJack(RemoteBlackJack):
         data = data/np.array([20, 10, 8, 8])
         return data
 
-    def stay_or_hit_dealer(self, decision):
+    def stay_or_hit_bot(self, decision):
         data = self.prepare_data_for_model()
         decision = round(np.mean(
             self.model.predict(data)))
@@ -685,8 +685,8 @@ class ClassicBlackJack(RemoteBlackJack):
     def __init__(self):
         super().__init__()
 
-    def stay_or_hit_dealer(self, decision):
-        return super().stay_or_hit_dealer(decision)
+    def stay_or_hit_bot(self, decision):
+        return super().stay_or_hit_bot(decision)
 
     def round(self):
         while True:
@@ -697,7 +697,28 @@ class ClassicBlackJack(RemoteBlackJack):
                 self.tour()
 
     def tour(self):
-        pass
+        player_decision = self.stay_or_hit_remote(player_decision)
+        print(player_decision)
+        bot_decision = self.stay_or_hit_bot(bot_decision)
+
+        options_player = self.calc_score(self.player_hand)
+        options_bot = self.calc_score(self.bot_hand)
+
+        options_bot = [x for x in options_bot if x <= 21]
+        options_player = [x for x in options_player if x <= 21]
+        # display game
+        self.show_game_and_chances(options_player, options_bot)
+
+        if player_decision == 0 and bot_decision == 0:
+            result = self.check_when_both_stays(
+                options_player,
+                options_bot
+            )
+            return result  # result (redirect to result screen)
+
+        result = self.check_if_busted(options_player, options_bot)
+        if result != 0:
+            return result
 
 
 if __name__ == "__main__":
