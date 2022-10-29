@@ -207,58 +207,6 @@ class Game:
             "color": card.color
         }
 
-    def prepare_data_for_model(self):
-        opponent_card_no = np.array([len(self.player_hand)])
-        dealer_card_no = np.array([len(self.dealer_hand)])
-        opponent_visible = np.array(self.player_hand[0].value)
-        options_dealer = self.calc_score(self.dealer_hand)
-        options_dealer = np.array([x for x in options_dealer if x <= 21])
-
-        ov = opponent_visible.shape[0]
-        od = options_dealer.shape[0]
-        if ov != 1:  # if player has visible ace
-            opponent_card_no = np.repeat(opponent_card_no, 2)
-            dealer_card_no = np.repeat(dealer_card_no, 2)
-            options_dealer = np.repeat(options_dealer, 2)
-        if od != 1:  # dealer has aces too
-            opponent_visible = np.repeat(opponent_visible, od)
-            dealer_card_no = np.repeat(dealer_card_no, od)
-            opponent_card_no = np.repeat(opponent_card_no, od)
-
-        opponent_card_no = opponent_card_no.reshape(
-            opponent_card_no[0],
-            -1
-        )
-        dealer_card_no = dealer_card_no.reshape(
-            dealer_card_no[0],
-            -1
-        )
-        opponent_visible = opponent_visible.reshape(
-            opponent_visible.shape[0],
-            -1
-        )
-        options_dealer = options_dealer.reshape(
-            options_dealer.shape[0],
-            -1
-        )
-        data = np.append(
-            options_dealer,
-            opponent_visible,
-            axis=1
-        )
-        data = np.append(
-            data,
-            dealer_card_no,
-            axis=1
-        )
-        data = np.append(
-            data,
-            opponent_card_no,
-            axis=1
-        )
-
-        data = data/np.array([20, 10, 8, 8])
-        return data
 
     def retrieve_start(self):
         player_decision, dealer_decision = self.prepare_game()
@@ -668,8 +616,64 @@ class NeuralBlackJack(RemoteBlackJack):
         super().__init__()
         self.model = load_model('game/model_file')
 
+    def prepare_data_for_model(self):
+        opponent_card_no = np.array([len(self.player_hand)])
+        dealer_card_no = np.array([len(self.dealer_hand)])
+        opponent_visible = np.array(self.player_hand[0].value)
+        options_dealer = self.calc_score(self.dealer_hand)
+        options_dealer = np.array([x for x in options_dealer if x <= 21])
+
+        ov = opponent_visible.shape[0]
+        od = options_dealer.shape[0]
+        if ov != 1:  # if player has visible ace
+            opponent_card_no = np.repeat(opponent_card_no, 2)
+            dealer_card_no = np.repeat(dealer_card_no, 2)
+            options_dealer = np.repeat(options_dealer, 2)
+        if od != 1:  # dealer has aces too
+            opponent_visible = np.repeat(opponent_visible, od)
+            dealer_card_no = np.repeat(dealer_card_no, od)
+            opponent_card_no = np.repeat(opponent_card_no, od)
+
+        opponent_card_no = opponent_card_no.reshape(
+            opponent_card_no[0],
+            -1
+        )
+        dealer_card_no = dealer_card_no.reshape(
+            dealer_card_no[0],
+            -1
+        )
+        opponent_visible = opponent_visible.reshape(
+            opponent_visible.shape[0],
+            -1
+        )
+        options_dealer = options_dealer.reshape(
+            options_dealer.shape[0],
+            -1
+        )
+        data = np.append(
+            options_dealer,
+            opponent_visible,
+            axis=1
+        )
+        data = np.append(
+            data,
+            dealer_card_no,
+            axis=1
+        )
+        data = np.append(
+            data,
+            opponent_card_no,
+            axis=1
+        )
+
+        data = data/np.array([20, 10, 8, 8])
+        return data
+
     def stay_or_hit_dealer(self, decision):
-        return super().stay_or_hit_dealer(decision)
+        data = self.prepare_data_for_model()
+        decision = round(np.mean(
+            self.model.predict(data)))
+        return decision
 
     def round(self):
         pass
