@@ -1,5 +1,6 @@
 import logging
 import threading
+import time
 from abc import abstractmethod
 from itertools import product
 from random import choices, sample
@@ -235,35 +236,6 @@ class Game:
                         }
                     } for card in self.player_hand
                 ]
-            }
-        }
-
-    def retrieve_game(self, player_chances, oponent_chances):
-        return {
-            "oponent": {
-                "cards": [
-                    {
-                        card: {
-                            "sign": card.sign,
-                            "color": card.color,
-                            "value": card.value
-                        }
-                    } for card in self.bot_hand
-                ],
-                "score": max(oponent_chances)
-            },
-            "player": {
-                "decision_made": 0,
-                "cards": [
-                    {
-                        card: {
-                            "sign": card.sign,
-                            "color": card.color,
-                            "value": card.value
-                        }
-                    } for card in self.bot_hand
-                ],
-                "score": max(player_chances)
             }
         }
 
@@ -578,6 +550,7 @@ class RemoteBlackJack(Game):
         self.decision_thread = None
         self.player_decision = 1
         self.bot_decision = 1
+        self.front_end = {}
         super().__init__()
 
     def spawn_decision_thread(self):
@@ -590,6 +563,7 @@ class RemoteBlackJack(Game):
         self.prepare_game()
         self.update_frontend()
         result = self.round()
+        return result
 
     def prepare_game(self):
         super().generate_deck()
@@ -603,10 +577,40 @@ class RemoteBlackJack(Game):
         pass
 
     def stay_or_hit_remote(self):
-        pass
+        if self.player_decision:
+            self.hit(self.player_hand)
 
     def update_frontend(self):
-        pass
+        return self.retrieve_game(self.player_hand, self.bot_hand)
+
+    def retrieve_game(self, player_chances, oponent_chances):
+        return {
+            "oponent": {
+                "cards": [
+                    {
+                        card: {
+                            "sign": card.sign,
+                            "color": card.color,
+                            "value": card.value
+                        }
+                    } for card in self.bot_hand
+                ],
+                "score": max(oponent_chances)
+            },
+            "player": {
+                "decision_made": 0,
+                "cards": [
+                    {
+                        card: {
+                            "sign": card.sign,
+                            "color": card.color,
+                            "value": card.value
+                        }
+                    } for card in self.bot_hand
+                ],
+                "score": max(player_chances)
+            }
+        }
 
 
 class NeuralBlackJack(RemoteBlackJack):
@@ -679,15 +683,16 @@ class ClassicBlackJack(RemoteBlackJack):
     def round(self):
         while True:
             while not self.decision_made:
+                print("Waiting for decision")
+                time.sleep(5)
                 continue
             else:
                 self.decision_made = 0
                 self.tour()
 
     def tour(self):
-        player_decision = self.stay_or_hit_remote(player_decision)
-        print(player_decision)
-        bot_decision = self.stay_or_hit_bot(bot_decision)
+        self.stay_or_hit_remote()
+        self.bot_decision = self.stay_or_hit_bot(self.bot_decision)
 
         options_player = self.calc_score(self.player_hand)
         options_bot = self.calc_score(self.bot_hand)
@@ -695,9 +700,9 @@ class ClassicBlackJack(RemoteBlackJack):
         options_bot = [x for x in options_bot if x <= 21]
         options_player = [x for x in options_player if x <= 21]
         # display game
-        self.show_game_and_chances(options_player, options_bot)
+        self.update_frontend(options_player, options_bot)
 
-        if player_decision == 0 and bot_decision == 0:
+        if self.player_decision == 0 and self.bot_decision == 0:
             result = self.check_when_both_stays(
                 options_player,
                 options_bot
@@ -707,10 +712,3 @@ class ClassicBlackJack(RemoteBlackJack):
         result = self.check_if_busted(options_player, options_bot)
         if result != 0:
             return result
-
-
-if __name__ == "__main__":
-    black_jack = Game()
-    listner = threading.Thread(
-        target=black_jack.stay_or_hit_remote
-    )
