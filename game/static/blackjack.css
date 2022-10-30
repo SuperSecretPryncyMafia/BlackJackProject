@@ -3,13 +3,13 @@ body {
     text-align: center;
 }
 
-#dealer-cards img {
+#oponent img {
     height: 175px;
     width: 125px;
     margin: 1px;
 }
 
-#your-cards img {
+#player img {
     height: 175px;
     width: 125px;
     margin: 1px;

@@ -49,35 +49,65 @@ function httpPost(urlIn) {
 async function hit() {
     document.getElementById("current-bet").innerText = "shid fucq";
     httpPost("http://127.0.0.1:5000/game_dealer/table_hit");
-    data = await getJSON("http://127.0.0.1:5000/game_dealer/table_hit");
+    await updateFrontend()
 }
 
 async function stay() {
     document.getElementById("current-bet").innerText = "no shi no fuq";
     httpPost("http://127.0.0.1:5000/game_dealer/table_stay");
-    data = await getJSON("http://127.0.0.1:5000/game_dealer/table_stay");
+    await updateFrontend()
 }
 
-function fillHand(cards) {
+function fillHandOponent(cards) {
+    elem = document.getElementById("oponent");
+    while(elem.firstChild)
+    {
+        elem.removeChild(elem.firstChild);
+    }
+
     cards.forEach(
-        (card) =>{
+        (card, index) =>{
             let cardImg = document.createElement("img");
-            cardImg.src = "game\\static\\cards\\" + card.sign + card.color + ".png";
-            document.getElementById("dealer-cards").append(cardImg);
+            if (index >= 1){
+                cardImg.src = "game\\static\\cards\\" + Object.keys(card)[0] + ".png";
+            } else {
+                cardImg.src = "\\game\\static\\cards_by_ola\\tyl.png";
+            }
+            document.getElementById("oponent").append(cardImg);
         }
     )
-        
-    
 }
 
-function startGame() {
+function fillHandPlayer(cards) {
+    elem = document.getElementById("player");
+    while(elem.firstChild)
+    {
+        elem.removeChild(elem.firstChild);
+    }
+    console.log(cards)
+    cards.forEach(
+        (card) => {
+            let cardImg = document.createElement("img");
+            cardImg.src = "game\\static\\cards\\"+Object.keys(card)[0]+".png";
+            document.getElementById("player").append(cardImg);
+        }
+    )
+}
+
+async function updateFrontend() {
+    frontend = await getJSON("http://127.0.0.1:5000/game_dealer/table");
+    fillHandOponent(frontend["oponent"]["cards"]);
+    fillHandPlayer(frontend["player"]["cards"]);
+}
+
+async function startGame() {
     // httpGet("http://127.0.0.1:5000/game_dealer/start_game");
     document.getElementById("hit").addEventListener("click", hit);
-    frontend = getJSON("http://127.0.0.1:5000/game_dealer/table")
-    fillHand(frontend["oponent"]["cards"])
-    let cardImg = document.createElement("img");
-    cardImg.src = "game\\static\\cards\\" + card + ".png";
-    document.getElementById("dealer-cards").append(cardImg);
+    document.getElementById("stay").addEventListener("click", stay);
+    await updateFrontend();
+    // let cardImg = document.createElement("img");
+    // cardImg.src = "game\\static\\cards\\" + card + ".png";
+    // document.getElementById("dealer-cards").append(cardImg);
     // document.getElementById("stay").addEventListener("click", stay);
 
 

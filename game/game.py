@@ -62,21 +62,17 @@ def card():
 
 @game_blueprint.route("/game_dealer/table", methods=["GET"])
 def table():
-    return jsonify(game_blueprint.game.front_end)
+    print(game_blueprint.game.retrieve_game)
+    return jsonify(game_blueprint.game.retrieve_game())
 
 
 @game_blueprint.route("/game_dealer/table_hit")
 def table_hit():
     game_blueprint.game.decision_made = 2
-    return 0
+    return "200"
 
 
 @game_blueprint.route("/game_dealer/table_stand")
 def table_stand():
     game_blueprint.game.decision_made = 1
-    return 0
-
-
-# @game_blueprint.route("/game_dealer/start_game")
-# def table_start():
-    
+    return "200"

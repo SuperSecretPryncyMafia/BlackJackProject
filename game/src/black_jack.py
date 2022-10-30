@@ -581,34 +581,31 @@ class RemoteBlackJack(Game):
             self.hit(self.player_hand)
 
     def update_frontend(self):
-        return self.retrieve_game(self.player_hand, self.bot_hand)
+        return self.retrieve_game()
 
-    def retrieve_game(self, player_chances, oponent_chances):
+    def retrieve_game(self):
         return {
             "oponent": {
                 "cards": [
                     {
-                        card: {
+                        ''.join([card.sign, card.color]): {
                             "sign": card.sign,
                             "color": card.color,
                             "value": card.value
                         }
                     } for card in self.bot_hand
-                ],
-                "score": max(oponent_chances)
+                ]
             },
             "player": {
-                "decision_made": 0,
                 "cards": [
                     {
-                        card: {
+                        ''.join([card.sign, card.color]): {
                             "sign": card.sign,
                             "color": card.color,
                             "value": card.value
                         }
-                    } for card in self.bot_hand
-                ],
-                "score": max(player_chances)
+                    } for card in self.player_hand
+                ]
             }
         }
 
