@@ -1,7 +1,9 @@
-from black_jack import BlackJack
 from flask import redirect, send_from_directory
-from home.home import home_blueprint
+
+from black_jack import BlackJack
 from game.game import game_blueprint
+from home.home import home_blueprint
+
 app = BlackJack()
 
 
