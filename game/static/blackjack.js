@@ -1,15 +1,3 @@
-// var dealerSum = 0;
-// var yourSum = 0;
-
-// var dealerAceCount = 0;
-// var yourAceCount = 0; 
-
-// var bet = 0;
-
-// var hidden;
-// var deck;
-
-// var canHit = true; //allows the player (you) to draw while yourSum <= 21
 
 var data = 0;
 var frontend = {};
@@ -23,38 +11,25 @@ async function getJSON(url) {
     return json
 }
 
-// function buildDeck() {
-//     let values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
-//     let types = ["C", "D", "H", "S"];
-//     deck = [];
-
-//     for (let i = 0; i < types.length; i++) {
-//         for (let j = 0; j < values.length; j++) {
-//             deck.push(values[j] + "-" + types[i]); //A-C -> K-C, A-D -> K-D
-//         }
-//     }
-//     // console.log(deck);
-// }
-
-function httpGet(urlIn) {
+async function httpGet(urlIn) {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", urlIn);
 }
 
-function httpPost(urlIn) {
+async function httpPost(urlIn) {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("POST", urlIn)
 }
 
 async function hit() {
     document.getElementById("current-bet").innerText = "shid fucq";
-    httpPost("http://127.0.0.1:5000/game_dealer/table_hit");
+    frontend = await getJSON("http://127.0.0.1:5000/game_dealer/table_hit");
     await updateFrontend()
 }
 
 async function stay() {
     document.getElementById("current-bet").innerText = "no shi no fuq";
-    httpPost("http://127.0.0.1:5000/game_dealer/table_stay");
+    frontend = await getJSON("http://127.0.0.1:5000/game_dealer/table_stay");
     await updateFrontend()
 }
 
@@ -95,7 +70,7 @@ function fillHandPlayer(cards) {
 }
 
 async function updateFrontend() {
-    frontend = await getJSON("http://127.0.0.1:5000/game_dealer/table");
+    
     fillHandOponent(frontend["oponent"]["cards"]);
     fillHandPlayer(frontend["player"]["cards"]);
 }
@@ -104,7 +79,10 @@ async function startGame() {
     // httpGet("http://127.0.0.1:5000/game_dealer/start_game");
     document.getElementById("hit").addEventListener("click", hit);
     document.getElementById("stay").addEventListener("click", stay);
+    frontend = await getJSON("http://127.0.0.1:5000/game_dealer/table");
     await updateFrontend();
+
+
     // let cardImg = document.createElement("img");
     // cardImg.src = "game\\static\\cards\\" + card + ".png";
     // document.getElementById("dealer-cards").append(cardImg);

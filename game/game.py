@@ -19,6 +19,7 @@ class GameBlueprint(Blueprint):
 
     def spawn_bot_game(self):
         self.game = ClassicBlackJack()
+        self.game.spawn_decision_thread()
 
     def spawn_neural_game(self):
         self.game = NeuralBlackJack()
@@ -62,17 +63,21 @@ def card():
 
 @game_blueprint.route("/game_dealer/table", methods=["GET"])
 def table():
-    print(game_blueprint.game.retrieve_game)
     return jsonify(game_blueprint.game.retrieve_game())
 
 
 @game_blueprint.route("/game_dealer/table_hit")
 def table_hit():
-    game_blueprint.game.decision_made = 2
+    return jsonify(game_blueprint.game.stay_or_hit_remote())
+
+
+@game_blueprint.route("/game_dealer/table_stay")
+def table_stay():
+    game_blueprint.game.decision_made = 1
     return "200"
 
 
-@game_blueprint.route("/game_dealer/table_stand")
-def table_stand():
-    game_blueprint.game.decision_made = 1
+@game_blueprint.route("/game_dealer/round")
+def round():
+    game_blueprint.game.tour()
     return "200"

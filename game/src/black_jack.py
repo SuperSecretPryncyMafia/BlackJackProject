@@ -362,6 +362,7 @@ class Game:
         card = sample(self.card_deck, 1)[0]
         hand.append(card)
         self.card_deck.remove(card)
+        return hand
 
     def reset(self) -> None:
         """
@@ -577,8 +578,8 @@ class RemoteBlackJack(Game):
         pass
 
     def stay_or_hit_remote(self):
-        if self.player_decision:
-            self.hit(self.player_hand)
+        self.player_hand = self.hit(self.player_hand)
+        return self.update_frontend()
 
     def update_frontend(self):
         return self.retrieve_game()
@@ -697,8 +698,6 @@ class ClassicBlackJack(RemoteBlackJack):
         options_bot = [x for x in options_bot if x <= 21]
         options_player = [x for x in options_player if x <= 21]
         # display game
-        self.update_frontend(options_player, options_bot)
-
         if self.player_decision == 0 and self.bot_decision == 0:
             result = self.check_when_both_stays(
                 options_player,
