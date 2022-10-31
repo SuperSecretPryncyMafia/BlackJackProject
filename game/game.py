@@ -1,13 +1,10 @@
-from flask import (
-    Blueprint,
-    render_template,
-    jsonify
-)
-from .src.black_jack import Game
-from keras.models import load_model
+from flask import Blueprint, jsonify, render_template
+
+from .src.black_jack import ClassicBlackJack, NeuralBlackJack
 
 
 class GameBlueprint(Blueprint):
+
     def __init__(self):
         super().__init__(
             name="game",
@@ -17,7 +14,20 @@ class GameBlueprint(Blueprint):
             url_prefix="/game",
             import_name=__name__
         )
-        self.game = Game()
+        self.game = None
+        self.frontend = {}
+
+    def spawn_bot_game(self):
+        self.game = ClassicBlackJack()
+        self.game.spawn_decision_thread()
+
+    def spawn_neural_game(self):
+        self.game = NeuralBlackJack()
+
+    def start_game(self):
+        self.spawn_bot_game()
+        self.game.prepare_game()
+        self.game.update_frontend()
 
     def stay_or_hit_remote(self, decision: int):
         self.game.decision_made = decision
@@ -31,12 +41,13 @@ game_blueprint = GameBlueprint()
 
 @game_blueprint.route("/game_bot", methods=["GET"])
 def game_bot():
-    game_blueprint.game.model = load_model('game/model_file')
+    game_blueprint.spawn_neural_game()
     return render_template("game/game.html")
 
 
 @game_blueprint.route("/game_dealer", methods=["GET"])
 def game_dealer():
+    game_blueprint.start_game()
     return render_template("game/game.html")
 
 
@@ -52,19 +63,21 @@ def card():
 
 @game_blueprint.route("/game_dealer/table", methods=["GET"])
 def table():
-    return jsonify(game_blueprint.game.retrieve_game(["a"], [1, 10]))
+    return jsonify(game_blueprint.game.retrieve_game())
 
 
-@game_blueprint.route("/game_dealer/table_hit", method=["POST"])
+@game_blueprint.route("/game_dealer/table_hit")
 def table_hit():
-    game_blueprint.stay_or_hit_remote(2)
+    return jsonify(game_blueprint.game.stay_or_hit_remote())
 
 
-@game_blueprint.route("/game_dealer/table_stand", method=["POST"])
-def table_stand():
-    game_blueprint.stay_or_hit_remote(1)
+@game_blueprint.route("/game_dealer/table_stay")
+def table_stay():
+    game_blueprint.game.decision_made = 1
+    return "200"
 
 
-@game_blueprint.route("/game_dealer/start_game")
-def table_start():
-    game_blueprint.game.remote_black_jack()
+@game_blueprint.route("/game_dealer/round")
+def round():
+    game_blueprint.game.tour()
+    return "200"
