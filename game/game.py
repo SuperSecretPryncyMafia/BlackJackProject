@@ -30,7 +30,7 @@ class GameBlueprint(Blueprint):
         self.game.update_frontend()
 
     def stay_or_hit_remote(self, decision: int):
-        self.game.decision_made = decision
+        self.game.player_decision = decision
 
     def retrieve_one_card(self):
         return self.game.retrieve_one_card()
@@ -68,13 +68,14 @@ def table():
 
 @game_blueprint.route("/game_dealer/table_hit")
 def table_hit():
+    game_blueprint.stay_or_hit_remote(1)
     return jsonify(game_blueprint.game.stay_or_hit_remote())
 
 
 @game_blueprint.route("/game_dealer/table_stay")
 def table_stay():
-    game_blueprint.game.decision_made = 1
-    return "200"
+    game_blueprint.stay_or_hit_remote(0)
+    return jsonify(game_blueprint.game.stay_or_hit_remote())
 
 
 @game_blueprint.route("/game_dealer/round")

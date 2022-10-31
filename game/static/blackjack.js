@@ -59,7 +59,6 @@ function fillHandPlayer(cards) {
     {
         elem.removeChild(elem.firstChild);
     }
-    console.log(cards)
     cards.forEach(
         (card) => {
             let cardImg = document.createElement("img");
@@ -70,7 +69,7 @@ function fillHandPlayer(cards) {
 }
 
 async function updateFrontend() {
-    
+    console.log(frontend)
     fillHandOponent(frontend["oponent"]["cards"]);
     fillHandPlayer(frontend["player"]["cards"]);
 }

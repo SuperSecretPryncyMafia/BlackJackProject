@@ -551,6 +551,7 @@ class RemoteBlackJack(Game):
         self.decision_thread = None
         self.player_decision = 1
         self.bot_decision = 1
+        self.player_hand = []
         self.front_end = {}
         super().__init__()
 
@@ -570,16 +571,23 @@ class RemoteBlackJack(Game):
         super().generate_deck()
         self.player_decision = 1
         self.bot_decision = 1
-        self.hit(self.player_hand)
-        self.hit(self.bot_hand)
+        self.result = None
+        self.player_hand = self.hit(self.player_hand)
+        self.bot_hand = self.hit(self.bot_hand)
 
     @abstractmethod
     def round(self, bot_engine):
         pass
 
+    @abstractmethod
     def stay_or_hit_remote(self):
-        self.player_hand = self.hit(self.player_hand)
-        return self.update_frontend()
+        pass
+
+    def hit_player(self):
+        # get random card from the deck
+        card = sample(self.card_deck, 1)[0]
+        self.player_hand.append(card)
+        self.card_deck.remove(card)
 
     def update_frontend(self):
         return self.retrieve_game()
@@ -607,7 +615,8 @@ class RemoteBlackJack(Game):
                         }
                     } for card in self.player_hand
                 ]
-            }
+            },
+            "result": self.result
         }
 
 
@@ -678,6 +687,16 @@ class ClassicBlackJack(RemoteBlackJack):
     def stay_or_hit_bot(self, decision):
         return super().stay_or_hit_bot(decision)
 
+    def stay_or_hit_remote(self):
+        print("{}: {}".format("self.player_decision", self.player_decision))
+        if self.player_decision == 1:
+            self.hit_player()
+            self.result = self.tour()
+        elif self.player_decision == 0:
+            self.result = self.tour()
+        self.player_decision = None
+        return self.update_frontend()
+
     def round(self):
         while True:
             while not self.decision_made:
@@ -689,7 +708,6 @@ class ClassicBlackJack(RemoteBlackJack):
                 self.tour()
 
     def tour(self):
-        self.stay_or_hit_remote()
         self.bot_decision = self.stay_or_hit_bot(self.bot_decision)
 
         options_player = self.calc_score(self.player_hand)
