@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from flask import redirect
 from flask import Blueprint, jsonify, render_template
 
 from .src.black_jack import ClassicBlackJack, NeuralBlackJack
@@ -39,11 +39,12 @@ class GameBlueprint(Blueprint):
 game_blueprint = GameBlueprint()
 
 
-@game_blueprint.route("/exit")
+@game_blueprint.route("/exit", methods=["GET"])
 def game_end():
     game_blueprint.game = None
     game_blueprint.front_end = {}
     return redirect("/home")
+
 
 @game_blueprint.route("/game_bot", methods=["GET"])
 def game_bot():

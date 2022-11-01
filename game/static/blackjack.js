@@ -27,12 +27,19 @@ async function hit() {
     await updateFrontend()
     switch (frontend["result"]) {
         case -1:
-            document.getElementById("result").innerText = "You Lose";
+            fillHandOponent(frontend["oponent"]["cards"], 0);
+            document.getElementById("results").innerText = "You Lose";
             break;
         case 1:
-            document.getElementById("result").innerText = "Tie";
+            fillHandOponent(frontend["oponent"]["cards"], 0);
+            document.getElementById("results").innerText = "Tie";
             break;
-        casw
+        case 2:
+            fillHandOponent(frontend["oponent"]["cards"], 0);
+            document.getElementById("results").innerText = "You win";
+            break;
+        case "None":
+            break;
     }
 }
 
@@ -40,9 +47,30 @@ async function stay() {
     document.getElementById("current-bet").innerText = "no shi no fuq";
     frontend = await getJSON("http://127.0.0.1:5000/game_dealer/table_stay");
     await updateFrontend()
+    console.log(frontend["result"])
+    switch (frontend["result"]) {
+        case -1:
+            fillHandOponent(frontend["oponent"]["cards"], 0);
+            document.getElementById("results").innerText = "You Lose";
+            break;
+        case 1:
+            fillHandOponent(frontend["oponent"]["cards"], 0);
+            document.getElementById("results").innerText = "Tie";
+            break;
+        case 2:
+            fillHandOponent(frontend["oponent"]["cards"], 0);
+            document.getElementById("results").innerText = "You win";
+            break;
+        case "None":
+            break;
+    }
 }
 
-function fillHandOponent(cards) {
+function exit() {
+    httpGet("http://127.0.0.1:5000/exit");
+}
+
+function fillHandOponent(cards, hidden=1) {
     elem = document.getElementById("oponent");
     while(elem.firstChild)
     {
@@ -52,10 +80,14 @@ function fillHandOponent(cards) {
     cards.forEach(
         (card, index) =>{
             let cardImg = document.createElement("img");
-            if (index >= 1){
-                cardImg.src = "game\\static\\cards\\" + Object.keys(card)[0] + ".png";
+            if (hidden == 1){
+                if (index >= 1){
+                    cardImg.src = "game\\static\\cards\\" + Object.keys(card)[0] + ".png";
+                } else {
+                    cardImg.src = "\\game\\static\\cards_by_ola\\tyl.png";
+                }
             } else {
-                cardImg.src = "\\game\\static\\cards_by_ola\\tyl.png";
+                cardImg.src = "game\\static\\cards\\" + Object.keys(card)[0] + ".png";
             }
             document.getElementById("oponent").append(cardImg);
         }
@@ -87,6 +119,7 @@ async function startGame() {
     // httpGet("http://127.0.0.1:5000/game_dealer/start_game");
     document.getElementById("hit").addEventListener("click", hit);
     document.getElementById("stay").addEventListener("click", stay);
+    document.getElementById("exit").addEventListener("click", exit);
     frontend = await getJSON("http://127.0.0.1:5000/game_dealer/table");
     await updateFrontend();
 

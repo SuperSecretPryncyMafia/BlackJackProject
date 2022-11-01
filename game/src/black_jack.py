@@ -571,7 +571,7 @@ class RemoteBlackJack(Game):
         super().generate_deck()
         self.player_decision = 1
         self.bot_decision = 1
-        self.result = None
+        self.result = 0
         self.player_hand = self.hit(self.player_hand)
         self.bot_hand = self.hit(self.bot_hand)
 
