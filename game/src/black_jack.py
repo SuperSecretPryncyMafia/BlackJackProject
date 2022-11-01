@@ -583,6 +583,9 @@ class RemoteBlackJack(Game):
     def stay_or_hit_remote(self):
         pass
 
+    def end_game(self):
+        pass
+
     def hit_player(self):
         # get random card from the deck
         card = sample(self.card_deck, 1)[0]

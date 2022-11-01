@@ -25,6 +25,15 @@ async function hit() {
     document.getElementById("current-bet").innerText = "shid fucq";
     frontend = await getJSON("http://127.0.0.1:5000/game_dealer/table_hit");
     await updateFrontend()
+    switch (frontend["result"]) {
+        case -1:
+            document.getElementById("result").innerText = "You Lose";
+            break;
+        case 1:
+            document.getElementById("result").innerText = "Tie";
+            break;
+        casw
+    }
 }
 
 async function stay() {

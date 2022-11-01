@@ -20,9 +20,14 @@
         <br>
         <button id="hit">Hit</button>
         <button id="stay">Stay</button>
+
         <h3 id="results"></h3>
+        <div style="align-items: center;">
+            <button id="exit">exit</button>
+        </div>
 	  <div id="betbox" style="display: flex; position: fixed; background: #ddd; padding: 30px; width: 99%; height: 220px; bottom: 0; right: 0; left:0; margin:0; justify-content: space-between; align-items: center; ">
 	    <h2>Bet: <span id="current-bet"></span></h2>
+
 	    <div style="display:flex; justify-content:center; align-items: center; gap:30px; width: 400px; flex-wrap: wrap;">
           <img id="bet5" src="{{url_for('game.static',filename='chips/5.png')}}" width="100" draggable="false">
           <img id="bet10" src="{{url_for('game.static',filename='chips/10.png')}}" width="100" draggable="false">
