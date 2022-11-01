@@ -117,88 +117,6 @@ class Game:
             if result != 0:
                 return result
 
-    def remote_black_jack(self):
-        game_state = self.retrieve_start()
-        player_decision = game_state["player"]["decision"]
-        bot_decision = game_state["oponent"]["decision"]
-        result = 0
-        while True:
-            game_state = self.get_game_state()  # and add request
-            self.decision_made = game_state["player"]["decision_made"]
-
-            while not self.decision_made:
-                game_state = self.get_game_state()
-                self.player_decision = self.decision_made - 1
-                # player_decision = game_state["player"]["decision"]
-                # another option
-                # self.decision_made = game_state["player"]["decision_made"]
-            else:
-                # print(player_decision)
-                # they shouldnt change on the other side of the program
-                # probably unnecessary
-                # self.player_hand = [Card(
-                #     card["sign"],
-                #     card["value"],
-                #     card["color"]
-                # ) for card in game_state["player"]["hand"]]
-                # self.bot_hand = [
-                #     Card(card["sign"],
-                #     card["value"],
-                #     card["color"]
-                # ) for card in game_state["bot"]["hand"]]
-                # if self.model is not None:
-                #     data = self.prepare_data_for_model()
-                #     bot_decision = round(np.mean(
-                #         self.model.predict(data)))
-                # else:
-                #     # Sperate version for model (reading js, earlier setup)
-                options_player = self.calc_score(self.player_hand)
-                options_bot = self.calc_score(self.bot_hand)
-
-                options_bot = [x for x in options_bot if x <= 21]
-                options_player = [x for x in options_player if x <= 21]
-
-                bot_decision = self.stay_or_hit_bot(bot_decision)
-
-                self.decision_made = 0
-                if player_decision == 0 and bot_decision == 0:
-                    result = self.check_when_both_stays(
-                        options_player,
-                        options_bot
-                    )
-                    self.decision_thread.join()
-                    return result
-
-                result = self.check_if_busted(options_player, options_bot)
-                if result != 0:
-                    self.decision_thread.join()
-                    return result
-
-        self.decision_thread.join()
-        #     options_player = self.calc_score(self.player_hand)
-        #     options_bot = self.calc_score(self.bot_hand)
-
-        #     options_bot = [x for x in options_bot if x <= 21]
-        #     options_player = [x for x in options_player if x <= 21]
-
-        #     self.show_game_and_chances(options_player, options_bot)
-
-        #     if player_decision == 0 and bot_decision == 0:
-        #         result = self.check_when_both_stays(
-        #             options_player,
-        #             options_bot
-        #         )
-        #         return result
-
-        #     result = self.check_if_busted(options_player, options_bot)
-        #     if result != 0:
-        #         return result
-
-    def stay_or_hit_remote(self):
-        while True:
-            if self.decision_made == 0:
-                pass
-
     def retrieve_one_card(self):
         self.generate_deck()
         card = sample(self.card_deck, 1)[0]
@@ -208,39 +126,6 @@ class Game:
             "value": card.value,
             "color": card.color
         }
-
-    def retrieve_start(self):
-        player_decision, bot_decision = self.prepare_game()
-        return {
-            "oponent": {
-                "decision": bot_decision,
-                "cards": [
-                    {
-                        card: {
-                            "sign": card.sign,
-                            "color": card.color,
-                            "value": card.value
-                        }
-                    } for card in self.bot_hand
-                ]
-            },
-            "player": {
-                "decision_made": 0,
-                "decision": player_decision,
-                "cards": [
-                    {
-                        card: {
-                            "sign": card.sign,
-                            "color": card.color,
-                            "value": card.value
-                        }
-                    } for card in self.player_hand
-                ]
-            }
-        }
-
-    def get_game_state(self):
-        return
 
     def random_generator_black_jack(self):
         self.generate_deck()
@@ -339,9 +224,6 @@ class Game:
             return stay_or_hit[0]
         else:
             return decision
-
-    def weighted_random_stay_or_hit(self, decision: int) -> int:
-        pass
 
     def stay_or_hit_player(self, decision):
         try:
