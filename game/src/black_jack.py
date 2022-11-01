@@ -505,64 +505,6 @@ class RemoteBlackJack(Game):
         }
 
 
-class NeuralBlackJack(RemoteBlackJack):
-    bot_engine = "Neural"
-
-    def __init__(self):
-        super().__init__()
-        self.model = load_model('game/model_file')
-
-    def get_hand_info(self, hand):
-        card_no = np.array([len(hand)])
-        visible = np.array(hand[0].value)
-        options = self.calc_score(hand)
-        return card_no, visible, options
-
-    def if_ace(self, card_no_1, card_no_2, view, ace_no=2):
-        card_no_1 = np.repeat(card_no_1, ace_no)
-        card_no_2 = np.repeat(card_no_2, ace_no)
-        view = np.repeat(view, ace_no)
-        return card_no_1, card_no_2, view
-
-    def prepare_data_for_model(self):
-        bot_card_no, _, options_bot = self.get_hand_info(self.dealer_hand)
-        player_card_no, player_view, _ = self.get_hand_info(self.player_hand)
-
-        pv = player_view.shape[0]
-        od = options_bot.shape[0]
-        if pv != 1:  # if player has visible ace
-            player_card_no, bot_card_no, options_bot = self.if_ace(
-                player_card_no,
-                bot_card_no,
-                options_bot
-            )
-        if od != 1:  # dealer has aces too
-            player_card_no, bot_card_no, player_view = self.if_ace(
-                player_card_no,
-                bot_card_no,
-                player_view,
-                od
-            )
-
-        data = options_bot.reshape(options_bot.shape[0], -1)
-
-        for column in [player_view, bot_card_no, player_card_no]:
-            column = column.reshape(column.shape[0], -1)
-            data = np.append(data, column, axis=1)
-
-        data = data/np.array([20, 10, 8, 8])
-        return data
-
-    def stay_or_hit_bot(self, decision):
-        data = self.prepare_data_for_model()
-        decision = round(np.mean(
-            self.model.predict(data)))
-        return decision
-
-    def round(self):
-        pass
-
-
 class ClassicBlackJack(RemoteBlackJack):
     bot_engine = "Classic"
 
@@ -611,3 +553,59 @@ class ClassicBlackJack(RemoteBlackJack):
         result = self.check_if_busted(options_player, options_bot)
         if result != 0:
             return result
+
+
+class NeuralBlackJack(ClassicBlackJack):
+    bot_engine = "Neural"
+
+    def __init__(self):
+        super().__init__()
+        self.model = load_model('game/model_file')
+
+    def get_hand_info(self, hand):
+        card_no = np.array([len(hand)])
+        visible = np.array(hand[0].value)
+        options = np.array(self.calc_score(hand))
+        return card_no, visible, options
+
+    def if_ace(self, card_no_1, card_no_2, view, ace_no=2):
+        card_no_1 = np.repeat(card_no_1, ace_no)
+        card_no_2 = np.repeat(card_no_2, ace_no)
+        view = np.repeat(view, ace_no)
+        return card_no_1, card_no_2, view
+
+    def prepare_data_for_model(self):
+        bot_card_no, _, options_bot = self.get_hand_info(self.bot_hand)
+        player_card_no, player_view, _ = self.get_hand_info(self.player_hand)
+
+        pv = player_view.shape[0]
+        od = options_bot.shape[0]
+        if pv != 1:  # if player has visible ace
+            player_card_no, bot_card_no, options_bot = self.if_ace(
+                player_card_no,
+                bot_card_no,
+                options_bot
+            )
+        if od != 1:  # dealer has aces too
+            player_card_no, bot_card_no, player_view = self.if_ace(
+                player_card_no,
+                bot_card_no,
+                player_view,
+                od
+            )
+
+        data = options_bot.reshape(options_bot.shape[0], -1)
+
+        for column in [player_view, bot_card_no, player_card_no]:
+            column = column.reshape(column.shape[0], -1)
+            data = np.append(data, column, axis=1)
+
+        data = data/np.array([20, 10, 8, 8])
+        return data
+
+    def stay_or_hit_bot(self, decision):
+        data = self.prepare_data_for_model()
+        decisions = self.model.predict(data)
+        print(decisions)
+        decision = round(np.mean(decisions))
+        return decision
