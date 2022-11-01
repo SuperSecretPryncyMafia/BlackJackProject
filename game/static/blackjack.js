@@ -64,6 +64,7 @@ async function stay() {
         case "None":
             break;
     }
+    document.getElementById("hit").removeEventListener("click", hit); // addEventListener("click", hit);
 }
 
 function exit() {
